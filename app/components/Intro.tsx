@@ -29,53 +29,57 @@ const Intro = async () => {
           </span>
         </div>
 
-        <h2 className="text-5xl md:text-7xl font-black tracking-tighter text-zinc-900 mb-10 leading-none">
+        <h2 className="text-5xl md:text-7xl font-black tracking-tighter text-zinc-900 mb-6 leading-none">
           {profile.name}
         </h2>
         
-        <div className="space-y-6 mb-12">
-          <p className="text-xl md:text-2xl text-zinc-800 leading-relaxed font-bold">
-            {profile.introduction}
-          </p>
-        </div>
-
-        <div className="flex items-center space-x-4 mb-12">
-          <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center">
-            <MapPin size={14} className="text-blue-600" />
+          <div className="mb-6">
+            <p className="text-sm text-zinc-500 leading-relaxed font-medium max-w-lg">
+              {profile.description}
+            </p>
           </div>
-          <span className="text-sm font-bold text-zinc-900 tracking-tight italic">{profile.area}</span>
+
+        <div className="mb-6">
+          <div className="flex items-center space-x-4">
+            <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center">
+              <MapPin size={14} className="text-blue-600" />
+            </div>
+            <span className="text-sm font-bold text-zinc-900 tracking-tight italic">{profile.area}</span>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <a 
-            href={profile.xUrl} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="flex items-center justify-between p-4 rounded-2xl border border-zinc-100 bg-white hover:border-zinc-900/30 transition-all duration-300 group shadow-sm"
-          >
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-zinc-50 group-hover:bg-zinc-900 group-hover:text-white transition-all">
-                <span className="font-black text-lg text-inherit">X</span>
+        <div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <a 
+              href={profile.xUrl} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center justify-between p-4 rounded-2xl border border-zinc-100 bg-white hover:border-zinc-900/30 transition-all duration-300 group shadow-sm"
+            >
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-zinc-50 group-hover:bg-zinc-900 group-hover:text-white transition-all">
+                  <span className="font-black text-lg text-inherit">X</span>
+                </div>
+                <span className="text-sm font-bold mono-font text-zinc-900 uppercase tracking-widest">X</span>
               </div>
-              <span className="text-sm font-bold mono-font text-zinc-900 uppercase tracking-widest">X</span>
-            </div>
-            <ArrowRight size={14} className="text-zinc-300 group-hover:text-zinc-900 group-hover:translate-x-1 transition-all" />
-          </a>
-          
-          <a 
-            href={profile.githubUrl} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="flex items-center justify-between p-4 rounded-2xl border border-zinc-100 bg-white hover:border-zinc-900/30 transition-all duration-300 group shadow-sm"
-          >
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-zinc-50 group-hover:bg-zinc-900 group-hover:text-white transition-all">
-                <Code size={18} />
+              <ArrowRight size={14} className="text-zinc-300 group-hover:text-zinc-900 group-hover:translate-x-1 transition-all" />
+            </a>
+            
+            <a 
+              href={profile.githubUrl} 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="flex items-center justify-between p-4 rounded-2xl border border-zinc-100 bg-white hover:border-zinc-900/30 transition-all duration-300 group shadow-sm"
+            >
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 flex items-center justify-center rounded-xl bg-zinc-50 group-hover:bg-zinc-900 group-hover:text-white transition-all">
+                  <Code size={18} />
+                </div>
+                <span className="text-sm font-bold mono-font text-zinc-900 uppercase tracking-widest">GitHub</span>
               </div>
-              <span className="text-sm font-bold mono-font text-zinc-900 uppercase tracking-widest">GitHub</span>
-            </div>
-            <ArrowRight size={14} className="text-zinc-300 group-hover:text-zinc-900 group-hover:translate-x-1 transition-all" />
-          </a>
+              <ArrowRight size={14} className="text-zinc-300 group-hover:text-zinc-900 group-hover:translate-x-1 transition-all" />
+            </a>
+          </div>
         </div>
       </div>
     </section>

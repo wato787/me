@@ -9,6 +9,7 @@ export interface Profile {
   name: string;
   introduction: string;
   area: string;
+  description?: string;
   image?: {
     url: string;
     width: number;
@@ -23,5 +24,25 @@ export async function getProfile(): Promise<Profile> {
     endpoint: 'profile',
   });
   return data;
+}
+
+export interface Blog {
+  id: string;
+  title: string;
+  description?: string;
+  content?: string;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt?: string;
+}
+
+export async function getBlogs(): Promise<Blog[]> {
+  const data = await client.getList<Blog>({
+    endpoint: 'blogs',
+    queries: {
+      orders: '-createdAt',
+    },
+  });
+  return data.contents;
 }
 
