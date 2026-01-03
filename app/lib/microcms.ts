@@ -46,3 +46,16 @@ export async function getBlogs(): Promise<Blog[]> {
   return data.contents;
 }
 
+export interface Skill {
+  id: string;
+  name: string;
+  color?: string;
+}
+
+export async function getSkills(): Promise<Skill[]> {
+  const data = await client.getList<Skill>({
+    endpoint: 'skills',
+  });
+  return data.contents;
+}
+
