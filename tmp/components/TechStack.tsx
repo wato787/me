@@ -11,7 +11,7 @@ import {
   Box, 
   Figma 
 } from 'lucide-react';
-import { TECH_STACK } from '../constants';
+import { TECH_STACK } from '../../constants';
 
 const IconMap: Record<string, React.ReactNode> = {
   "Go": <Terminal size={18} />,

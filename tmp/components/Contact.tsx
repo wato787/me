@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { ArrowUpRight } from 'lucide-react';
-import { TWITTER_URL } from '../constants';
+import { TWITTER_URL } from '../../constants';
 
 const Contact: React.FC = () => {
   return (

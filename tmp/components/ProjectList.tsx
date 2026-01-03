@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { ArrowUpRight } from 'lucide-react';
-import { PROJECTS } from '../constants';
+import { PROJECTS } from '../../constants';
 
 const ProjectList: React.FC = () => {
   return (

@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Github, MapPin, ArrowRight } from 'lucide-react';
-import { BIO, TWITTER_URL, GITHUB_URL, ID, NAME } from '../constants';
+import { BIO, TWITTER_URL, GITHUB_URL, ID, NAME } from '../../constants';
 
 const Intro: React.FC = () => {
   return (

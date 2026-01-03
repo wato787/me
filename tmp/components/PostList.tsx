@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { POSTS } from '../constants';
+import { POSTS } from '../../constants';
 
 const PostList: React.FC = () => {
   return (

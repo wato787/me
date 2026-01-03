@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Terminal } from 'lucide-react';
-import { ID } from '../constants';
+import { ID } from '../../constants';
 
 const Header: React.FC = () => {
   return (
