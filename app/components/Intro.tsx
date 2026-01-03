@@ -1,23 +1,19 @@
 import Image from 'next/image';
 import { Code, MapPin, ArrowRight } from 'lucide-react';
+import { getProfile } from '../lib/microcms';
 
-const NAME = "wato787";
-const ID = "wato787";
-const BIO = "Go / TypeScript / Cloudflare. 削ぎ落とし、本質を実装する。";
-const TWITTER_URL = "https://x.com/wato787";
-const GITHUB_URL = "https://github.com/wato787";
-
-const Intro = () => {
+const Intro = async () => {
+  const profile = await getProfile();
   return (
     <section className="pt-20 pb-32 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
       {/* Column 1: Profile Image - SQUARE */}
       <div className="relative group">
         <div className="relative aspect-square rounded-[2rem] overflow-hidden bg-zinc-100 shadow-2xl transition-all duration-700 hover:shadow-blue-600/10">
           <Image 
-            src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=800" 
-            alt={NAME}
-            width={800}
-            height={800}
+            src={profile.image?.url || "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=800"} 
+            alt={profile.name}
+            width={profile.image?.width || 800}
+            height={profile.image?.height || 800}
             className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000 scale-105 group-hover:scale-100"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-40"></div>
@@ -34,12 +30,12 @@ const Intro = () => {
         </div>
 
         <h2 className="text-5xl md:text-7xl font-black tracking-tighter text-zinc-900 mb-10 leading-none">
-          {ID}
+          {profile.name}
         </h2>
         
         <div className="space-y-6 mb-12">
           <p className="text-xl md:text-2xl text-zinc-800 leading-relaxed font-bold">
-            {BIO}
+            {profile.introduction}
           </p>
         </div>
 
@@ -47,12 +43,12 @@ const Intro = () => {
           <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center">
             <MapPin size={14} className="text-blue-600" />
           </div>
-          <span className="text-sm font-bold text-zinc-900 tracking-tight italic">Tokyo / Remote ok</span>
+          <span className="text-sm font-bold text-zinc-900 tracking-tight italic">{profile.area}</span>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <a 
-            href={TWITTER_URL} 
+            href={profile.xUrl} 
             target="_blank" 
             rel="noopener noreferrer"
             className="flex items-center justify-between p-4 rounded-2xl border border-zinc-100 bg-white hover:border-zinc-900/30 transition-all duration-300 group shadow-sm"
@@ -67,7 +63,7 @@ const Intro = () => {
           </a>
           
           <a 
-            href={GITHUB_URL} 
+            href={profile.githubUrl} 
             target="_blank" 
             rel="noopener noreferrer"
             className="flex items-center justify-between p-4 rounded-2xl border border-zinc-100 bg-white hover:border-zinc-900/30 transition-all duration-300 group shadow-sm"
