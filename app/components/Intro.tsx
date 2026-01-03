@@ -1,24 +1,30 @@
 import Image from 'next/image';
 import { Code, MapPin, ArrowRight } from 'lucide-react';
-import { getProfile } from '../lib/microcms';
+import { getProfile, optimizeImageUrl } from '../lib/microcms';
 
 const Intro = async () => {
   const profile = await getProfile();
+  const imageUrl = profile.image?.url 
+    ? optimizeImageUrl(profile.image.url, 800, 800, 'webp')
+    : null;
+  
   return (
     <section className="pt-20 pb-32 grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-24 items-center">
       {/* Column 1: Profile Image - SQUARE */}
-      <div className="relative group">
-        <div className="relative aspect-square rounded-[2rem] overflow-hidden bg-zinc-100 shadow-2xl transition-all duration-700 hover:shadow-blue-600/10">
-          <Image 
-            src={profile.image?.url || "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=800"} 
-            alt={profile.name}
-            width={profile.image?.width || 800}
-            height={profile.image?.height || 800}
-            className="w-full h-full object-cover transition-all duration-1000 scale-105 group-hover:scale-100"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-40"></div>
+      {imageUrl && (
+        <div className="relative group">
+          <div className="relative aspect-square rounded-[2rem] overflow-hidden bg-zinc-100 shadow-2xl transition-all duration-700 hover:shadow-blue-600/10">
+            <Image 
+              src={imageUrl}
+              alt={profile.name}
+              width={800}
+              height={800}
+              className="w-full h-full object-cover transition-all duration-1000 scale-105 group-hover:scale-100"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-40"></div>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Column 2: Profile Info */}
       <div className="flex flex-col justify-center">
