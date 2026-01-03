@@ -14,7 +14,7 @@ const Intro = async () => {
             alt={profile.name}
             width={profile.image?.width || 800}
             height={profile.image?.height || 800}
-            className="w-full h-full object-cover grayscale hover:grayscale-0 transition-all duration-1000 scale-105 group-hover:scale-100"
+            className="w-full h-full object-cover transition-all duration-1000 scale-105 group-hover:scale-100"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-40"></div>
         </div>
