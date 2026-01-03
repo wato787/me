@@ -57,6 +57,14 @@ export async function getBlogs(): Promise<Blog[]> {
   return data.contents;
 }
 
+export async function getBlogById(id: string): Promise<Blog> {
+  const data = await client.get<Blog>({
+    endpoint: 'blogs',
+    contentId: id,
+  });
+  return data;
+}
+
 export interface Skill {
   id: string;
   name: string;
