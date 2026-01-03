@@ -5,13 +5,13 @@ interface Project {
   githubUrl: string;
 }
 
-const PROJECTS: Project[] = [
-  { name: "Nexus Design System", githubUrl: "https://github.com/wato787/nexus" },
-  { name: "Aura Motion Engine", githubUrl: "https://github.com/wato787/aura" },
-  { name: "Zenith API Gateway", githubUrl: "https://github.com/wato787/zenith" },
-];
+const PROJECTS: Project[] = [];
 
 const ProjectList = () => {
+  if (PROJECTS.length === 0) {
+    return null;
+  }
+
   return (
     <section id="works" className="mb-64">
       <h2 className="text-[10px] uppercase tracking-[0.6em] text-blue-600 mb-16 font-black">
