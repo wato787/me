@@ -15,9 +15,9 @@ const Header = async () => {
           <li>
             <a href="#blog" className="hover:text-black transition-colors">Blog</a>
           </li>
-          <li>
+          {/* <li>
             <a href="#works" className="hover:text-black transition-colors">Works</a>
-          </li>
+          </li> */}
         </ul>
       </nav>
     </header>
