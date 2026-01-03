@@ -27,7 +27,7 @@ export default async function BlogPostPage({ params }: PageProps) {
 
   return (
     <div className="min-h-screen bg-white selection:bg-blue-600 selection:text-white antialiased">
-      <div className="max-w-4xl mx-auto px-6">
+      <div className="max-w-4xl mx-auto px-0 md:px-6">
         <article className="py-20">
           <header className="mb-20">
             <Link
@@ -48,7 +48,7 @@ export default async function BlogPostPage({ params }: PageProps) {
             </div>
           </header>
 
-          <div className="prose prose-zinc max-w-2xl">
+          <div className="prose prose-zinc max-w-md md:max-w-2xl">
             <div
               className="text-zinc-800 leading-[1.8] text-lg font-medium"
               dangerouslySetInnerHTML={{ __html: post.content || post.description || '' }}
