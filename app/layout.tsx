@@ -18,7 +18,7 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: "wato787 | Portfolio",
-  description: "Go / TypeScript / Cloudflare. 削ぎ落とし、本質を実装する。",
+  description: "wato787のポートフォリオサイトです。",
 };
 
 export default function RootLayout({
