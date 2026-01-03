@@ -25,7 +25,7 @@ const PostList = async () => {
             href={`/blog/${blog.id}`}
             className="group flex flex-col md:flex-row md:items-baseline gap-2 md:gap-12 py-8 border-b border-zinc-100 first:border-t"
           >
-            <span className="text-sm font-medium text-zinc-400 mono-font w-32 flex-shrink-0 transition-colors group-hover:text-zinc-500">
+            <span className="text-sm font-medium text-zinc-500 mono-font w-32 flex-shrink-0 transition-colors group-hover:text-zinc-600">
               {formatDate(blog.createdAt)}
             </span>
             <span className="text-xl md:text-2xl font-bold text-zinc-900 group-hover:text-blue-600 transition-colors duration-300">

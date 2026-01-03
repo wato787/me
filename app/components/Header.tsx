@@ -12,7 +12,7 @@ const Header = async () => {
         <span className="text-sm font-black tracking-tighter uppercase leading-none mono-font">{profile.name}</span>
       </Link>
       <nav>
-        <ul className="flex space-x-6 text-[11px] font-bold uppercase tracking-[0.1em] text-zinc-400">
+        <ul className="flex space-x-6 text-[11px] font-bold uppercase tracking-[0.1em] text-zinc-500">
           <Link href="/blog" className="hover:text-black transition-colors">Blog</Link>
           {/* <li>
             <a href="#works" className="hover:text-black transition-colors">Works</a>

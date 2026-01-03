@@ -30,7 +30,7 @@ const Intro = async () => {
       <div className="flex flex-col justify-center">
         <div className="flex items-center space-x-3 mb-6">
           <div className="w-2 h-2 rounded-full bg-blue-600"></div>
-          <span className="text-[11px] font-black uppercase tracking-[0.4em] text-zinc-400">
+          <span className="text-[11px] font-black uppercase tracking-[0.4em] text-zinc-500">
             PROFILE
           </span>
         </div>
@@ -40,7 +40,7 @@ const Intro = async () => {
         </h2>
         
           <div className="mb-6">
-            <p className="text-sm text-zinc-500 leading-relaxed font-medium max-w-lg">
+            <p className="text-sm text-zinc-600 leading-relaxed font-medium max-w-lg">
               {profile.description}
             </p>
           </div>

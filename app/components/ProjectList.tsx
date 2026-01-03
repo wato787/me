@@ -27,7 +27,7 @@ const ProjectList = () => {
               href={project.githubUrl} 
               target="_blank" 
               rel="noopener noreferrer"
-              className="flex items-center gap-2 text-[10px] font-black text-zinc-300 group-hover:text-blue-600 transition-all mono-font uppercase tracking-widest"
+              className="flex items-center gap-2 text-[10px] font-black text-zinc-400 group-hover:text-blue-600 transition-all mono-font uppercase tracking-widest"
             >
               GitHub <ArrowUpRight size={14} className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
             </a>

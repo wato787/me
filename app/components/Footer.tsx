@@ -10,11 +10,11 @@ const Footer = async () => {
             {profile.name}
           </Link>
           
-          <div className="flex gap-12 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 items-center">
+          <div className="flex gap-12 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500 items-center">
             <a href={profile.xUrl} target="_blank" rel="noopener noreferrer" className="hover:text-blue-600 transition-colors">X</a>
             <a href={profile.githubUrl} target="_blank" rel="noopener noreferrer" className="hover:text-blue-600 transition-colors">GitHub</a>
             <span className="w-1 h-1 bg-zinc-100 rounded-full"></span>
-            <span className="text-zinc-300 cursor-default mono-font">
+            <span className="text-zinc-400 cursor-default mono-font">
               &copy; {new Date().getFullYear()}
             </span>
           </div>
