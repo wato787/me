@@ -1,10 +1,41 @@
 
+import type { Metadata } from "next";
 import { getBlogs, getBlogById } from '../../lib/microcms';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 
 interface PageProps {
   params: Promise<{ id: string }>;
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { id } = await params;
+  const blog = await getBlogById(id);
+
+  const title = blog.title;
+  const description = blog.description ?? "ブログ記事です。";
+  const url = `/blog/${id}`;
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: url,
+    },
+    openGraph: {
+      type: "article",
+      url,
+      title,
+      description,
+      images: [{ url: "/favicon.ico" }],
+    },
+    twitter: {
+      card: "summary",
+      title,
+      description,
+      images: ["/favicon.ico"],
+    },
+  };
 }
 
 const formatDateForDisplay = (dateString: string): string => {

@@ -1,5 +1,27 @@
+import type { Metadata } from "next";
 import { ChevronRight } from 'lucide-react';
 import { getBlogs } from '../lib/microcms';
+
+export const metadata: Metadata = {
+  title: "LOG",
+  description: "これまでに書いた記事の一覧です。",
+  alternates: {
+    canonical: "/blog",
+  },
+  openGraph: {
+    type: "website",
+    url: "/blog",
+    title: "LOG",
+    description: "これまでに書いた記事の一覧です。",
+    images: [{ url: "/favicon.ico" }],
+  },
+  twitter: {
+    card: "summary",
+    title: "LOG",
+    description: "これまでに書いた記事の一覧です。",
+    images: ["/favicon.ico"],
+  },
+};
 
 const formatDateForDisplay = (dateString: string): string => {
   const date = new Date(dateString);

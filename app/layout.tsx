@@ -16,9 +16,41 @@ const jetbrainsMono = JetBrains_Mono({
   weight: ["400", "700"],
 });
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
+
 export const metadata: Metadata = {
-  title: "wato787 | Portfolio",
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: "wato787 | Portfolio",
+    template: "%s | wato787",
+  },
   description: "wato787のポートフォリオサイトです。",
+  alternates: {
+    canonical: "/",
+  },
+  icons: {
+    icon: "/favicon.ico",
+    shortcut: "/favicon.ico",
+  },
+  openGraph: {
+    type: "website",
+    url: "/",
+    title: "wato787 | Portfolio",
+    description: "wato787のポートフォリオサイトです。",
+    siteName: "wato787",
+    locale: "ja_JP",
+    images: [
+      {
+        url: "/favicon.ico",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary",
+    title: "wato787 | Portfolio",
+    description: "wato787のポートフォリオサイトです。",
+    images: ["/favicon.ico"],
+  },
 };
 
 export default function RootLayout({
