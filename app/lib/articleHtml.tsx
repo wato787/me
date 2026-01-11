@@ -156,7 +156,10 @@ export function renderArticleHtml(html: string): ReactNode {
         // Prism のテーマCSSは pre/code の language-* クラスに紐づくため、
         // 子の <code class="language-xxx"> があれば pre 側にも付与する。
         const firstCode = (el.children ?? []).find(
-          (c): c is Element => (c as any)?.type === 'tag' && (c as any)?.name === 'code',
+          (c): c is Element => {
+            const maybeEl = c as unknown as Element;
+            return maybeEl.type === 'tag' && maybeEl.name === 'code';
+          },
         );
         const codeClass = firstCode?.attribs?.class ?? '';
         const languageClass = codeClass
