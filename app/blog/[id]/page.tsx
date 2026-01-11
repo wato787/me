@@ -33,6 +33,15 @@ const mergeRel = (existing: string | undefined, tokens: string[]) => {
   return Array.from(set).join(' ');
 };
 
+const isInternalHref = (href: string) => {
+  if (!href) return false;
+  if (href.startsWith('#')) return false;
+  if (href.startsWith('mailto:')) return false;
+  if (href.startsWith('tel:')) return false;
+  if (href.startsWith('//')) return false; // protocol-relative
+  return href.startsWith('/');
+};
+
 const renderArticleHtml = (html: string) => {
   let imageIndex = 0;
 
@@ -78,6 +87,14 @@ const renderArticleHtml = (html: string) => {
 
         const isBlank = target === '_blank';
         const safeRel = isBlank ? mergeRel(rel, ['noopener', 'noreferrer']) : rel;
+
+        if (isInternalHref(href)) {
+          return (
+            <Link href={href} target={target} rel={safeRel} className={className}>
+              {domToReact(el.children as DOMNode[], options)}
+            </Link>
+          );
+        }
 
         return (
           <a href={href} target={target} rel={safeRel} className={className}>
