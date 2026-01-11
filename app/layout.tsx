@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Noto_Sans_JP, JetBrains_Mono } from "next/font/google";
+import "prismjs/themes/prism.css";
 import "./globals.css";
 import Footer from "./components/Footer";
 import Header from "./components/Header";

@@ -146,10 +146,36 @@ export function renderArticleHtml(html: string): ReactNode {
         );
       }
 
+      if (el.name === 'code') {
+        const className = [el.attribs?.class, 'mono-font'].filter(Boolean).join(' ');
+        const children = domToReact(el.children as DOMNode[], options);
+        return <code className={className}>{children}</code>;
+      }
+
       if (el.name === 'pre') {
+        // Prism のテーマCSSは pre/code の language-* クラスに紐づくため、
+        // 子の <code class="language-xxx"> があれば pre 側にも付与する。
+        const firstCode = (el.children ?? []).find(
+          (c): c is Element => {
+            const maybeEl = c as unknown as Element;
+            return maybeEl.type === 'tag' && maybeEl.name === 'code';
+          },
+        );
+        const codeClass = firstCode?.attribs?.class ?? '';
+        const languageClass = codeClass
+          .split(/\s+/)
+          .find((token) => token.startsWith('language-'));
+
         const children = domToReact(el.children as DOMNode[], options);
         return (
-          <pre className="my-10 overflow-x-auto rounded-lg border border-zinc-100 bg-zinc-50 p-4 text-sm">
+          <pre
+            className={[
+              'my-10 overflow-x-auto rounded-lg border border-zinc-100 bg-zinc-50 p-4 text-sm mono-font',
+              languageClass,
+            ]
+              .filter(Boolean)
+              .join(' ')}
+          >
             {children}
           </pre>
         );

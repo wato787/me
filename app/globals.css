@@ -29,6 +29,12 @@ body {
   font-family: var(--font-jetbrains-mono), monospace;
 }
 
+/* Prism: keep site background while highlighting */
+pre[class*="language-"],
+code[class*="language-"] {
+  background: transparent;
+}
+
 /* Stoic scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
