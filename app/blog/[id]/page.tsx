@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import { renderArticleHtml } from '../../lib/articleHtml';
 import { formatDateYmd } from '../../lib/date';
+import PrismHighlighter from '../../components/PrismHighlighter';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -44,7 +45,9 @@ export default async function BlogPostPage({ params }: PageProps) {
 
           <div className="prose prose-zinc max-w-md md:max-w-2xl">
             <div className="text-zinc-800 leading-[1.8] text-lg font-medium">
-              {renderArticleHtml(post.content || post.description || '')}
+              <PrismHighlighter>
+                {renderArticleHtml(post.content || post.description || '')}
+              </PrismHighlighter>
             </div>
           </div>
 
