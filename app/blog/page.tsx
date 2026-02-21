@@ -1,12 +1,6 @@
 import { ChevronRight } from 'lucide-react';
 import { getBlogs } from '../lib/microcms';
-
-const formatDateForDisplay = (dateString: string): string => {
-  const date = new Date(dateString);
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${month}.${day}`;
-};
+import { formatDateMdDot } from '../lib/date';
 
 const groupBlogsByYear = (blogs: Awaited<ReturnType<typeof getBlogs>>) => {
   const grouped: Record<string, typeof blogs> = {};
@@ -51,7 +45,7 @@ const BlogPage = async () => {
                     <div className="flex flex-col md:flex-row gap-4 md:gap-16">
                       <div className="md:w-32 flex-shrink-0">
                         <span className="text-sm mono-font font-bold text-zinc-300 group-hover:text-blue-600 transition-colors">
-                          {formatDateForDisplay(blog.createdAt)}
+                          {formatDateMdDot(blog.createdAt)}
                         </span>
                       </div>
                       

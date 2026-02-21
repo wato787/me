@@ -2,18 +2,13 @@
 import { getBlogs, getBlogById } from '../../lib/microcms';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
+import { renderArticleHtml } from '../../lib/articleHtml';
+import { formatDateYmd } from '../../lib/date';
+import PrismHighlighter from '../../components/PrismHighlighter';
 
 interface PageProps {
   params: Promise<{ id: string }>;
 }
-
-const formatDateForDisplay = (dateString: string): string => {
-  const date = new Date(dateString);
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
-};
 
 export default async function BlogPostPage({ params }: PageProps) {
   const { id } = await params;
@@ -22,7 +17,7 @@ export default async function BlogPostPage({ params }: PageProps) {
 
   const post = {
     ...blog,
-    date: formatDateForDisplay(blog.createdAt),
+    date: formatDateYmd(blog.createdAt),
   };
 
   return (
@@ -49,10 +44,11 @@ export default async function BlogPostPage({ params }: PageProps) {
           </header>
 
           <div className="prose prose-zinc max-w-md md:max-w-2xl">
-            <div
-              className="text-zinc-800 leading-[1.8] text-lg font-medium"
-              dangerouslySetInnerHTML={{ __html: post.content || post.description || '' }}
-            />
+            <div className="text-zinc-800 leading-[1.8] text-lg font-medium">
+              <PrismHighlighter>
+                {renderArticleHtml(post.content || post.description || '')}
+              </PrismHighlighter>
+            </div>
           </div>
 
           <div className="mt-40 pt-20 border-t border-zinc-100 flex justify-between items-center">

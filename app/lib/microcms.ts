@@ -26,15 +26,30 @@ export async function getProfile(): Promise<Profile> {
   return data;
 }
 
-export function optimizeImageUrl(url: string, width?: number, height?: number, format: 'webp' | 'jpg' | 'png' = 'webp'): string {
-  const params = new URLSearchParams();
-  if (width) params.set('w', width.toString());
-  if (height) params.set('h', height.toString());
-  params.set('f', format);
-  params.set('q', '80');
-  
-  const separator = url.includes('?') ? '&' : '?';
-  return `${url}${separator}${params.toString()}`;
+export function optimizeImageUrl(
+  url: string,
+  width?: number,
+  height?: number,
+  format: 'webp' | 'jpg' | 'png' = 'webp'
+): string {
+  try {
+    const u = new URL(url);
+    if (width) u.searchParams.set('w', width.toString());
+    if (height) u.searchParams.set('h', height.toString());
+    u.searchParams.set('f', format);
+    u.searchParams.set('q', '80');
+    return u.toString();
+  } catch {
+    // URL() が扱えない形式（相対URLなど）の場合は従来の組み立てにフォールバック
+    const params = new URLSearchParams();
+    if (width) params.set('w', width.toString());
+    if (height) params.set('h', height.toString());
+    params.set('f', format);
+    params.set('q', '80');
+
+    const separator = url.includes('?') ? '&' : '?';
+    return `${url}${separator}${params.toString()}`;
+  }
 }
 
 export interface Blog {
