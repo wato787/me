@@ -1,4 +1,5 @@
 import './article-body.css';
+import type { Metadata } from 'next';
 import { getBlogs, getBlogById } from '../../lib/microcms';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
@@ -8,6 +9,30 @@ import PrismHighlighter from '../../components/PrismHighlighter';
 
 interface PageProps {
   params: Promise<{ id: string }>;
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { id } = await params;
+  const blog = await getBlogById(id);
+  const title = blog.title ?? 'Blog';
+  const description =
+    blog.description ?? (blog.content ? blog.content.replace(/<[^>]*>/g, '').slice(0, 160) + '...' : undefined);
+
+  return {
+    title: `${title} | wato787`,
+    description: description ?? 'wato787のブログ記事です。',
+    openGraph: {
+      title,
+      description: description ?? 'wato787のブログ記事です。',
+      type: 'article',
+      url: `/blog/${id}`,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title,
+      description: description ?? 'wato787のブログ記事です。',
+    },
+  };
 }
 
 export default async function BlogPostPage({ params }: PageProps) {
