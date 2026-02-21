@@ -1,4 +1,4 @@
-
+import './article-body.css';
 import { getBlogs, getBlogById } from '../../lib/microcms';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
@@ -43,12 +43,10 @@ export default async function BlogPostPage({ params }: PageProps) {
             </div>
           </header>
 
-          <div className="prose prose-zinc max-w-md md:max-w-2xl">
-            <div className="text-zinc-800 leading-[1.8] text-lg font-medium">
-              <PrismHighlighter>
-                {renderArticleHtml(post.content || post.description || '')}
-              </PrismHighlighter>
-            </div>
+          <div className="blog-article-body max-w-md md:max-w-4xl" data-blog-article-body>
+            <PrismHighlighter>
+              {renderArticleHtml(post.content || post.description || '')}
+            </PrismHighlighter>
           </div>
 
           <div className="mt-40 pt-20 border-t border-zinc-100 flex justify-between items-center">

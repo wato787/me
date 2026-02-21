@@ -76,6 +76,7 @@ export async function getBlogById(id: string): Promise<Blog> {
   const data = await client.get<Blog>({
     endpoint: 'blogs',
     contentId: id,
+    queries: { richEditorFormat: 'html' },
   });
   return data;
 }

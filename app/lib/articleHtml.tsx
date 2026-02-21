@@ -40,6 +40,41 @@ function optimizeContentImageSrc(src: string, width?: number, height?: number): 
   return src;
 }
 
+function escapeHtml(s: string): string {
+  return s
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+/** 許可するURLスキーム（相対・絶対・mailto・アンカー） */
+function isAllowedHref(url: string): boolean {
+  const t = url.trim();
+  return (
+    t.startsWith('https://') ||
+    t.startsWith('http://') ||
+    t.startsWith('/') ||
+    t.startsWith('mailto:') ||
+    t.startsWith('#')
+  );
+}
+
+/**
+ * Markdown風のインライン記法をHTMLに変換
+ * - [text](url) → <a href="url">text</a>（[]の中身を表示、()の中身をhrefに）
+ * - `code` → <code>code</code>
+ */
+function preprocessMarkdownInline(html: string): string {
+  return html
+    .replace(/\[([^\]]*)\]\s*\(\s*([^)]+)\s*\)/g, (_, text: string, url: string) => {
+      const u = url.trim();
+      if (!isAllowedHref(u)) return _;
+      return `<a href="${escapeHtml(u)}">${escapeHtml(text)}</a>`;
+    })
+    .replace(/`([^`]+)`/g, (_, code: string) => `<code>${escapeHtml(code)}</code>`);
+}
+
 /**
  * microCMSの本文HTMLを React Node に変換する
  * - img -> next/image に置換
@@ -183,6 +218,6 @@ export function renderArticleHtml(html: string): ReactNode {
     },
   };
 
-  return parse(html, options);
+  return parse(preprocessMarkdownInline(html), options);
 }
 
