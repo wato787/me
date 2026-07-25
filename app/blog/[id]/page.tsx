@@ -1,11 +1,12 @@
-import './article-body.css';
 import type { Metadata } from 'next';
 import { getBlogs, getBlogById } from '../../lib/microcms';
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
+import ArticleBody from '../../components/ArticleBody/ArticleBody';
 import { renderArticleHtml } from '../../lib/articleHtml';
 import { formatDateYmd } from '../../lib/date';
-import PrismHighlighter from '../../components/PrismHighlighter';
+
+import styles from './page.module.css';
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -46,44 +47,30 @@ export default async function BlogPostPage({ params }: PageProps) {
   };
 
   return (
-    <div className="min-h-screen bg-white selection:bg-blue-600 selection:text-white antialiased">
-      <div className="max-w-4xl mx-auto px-0 md:px-6">
-        <article className="py-20">
-          <header className="mb-20">
-            <Link
-              href="/blog"
-              className="group inline-flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-blue-600 transition-colors mb-12 mono-font"
-            >
-              <ArrowLeft size={14} className="group-hover:-translate-x-1 transition-transform" />
+    <div className={styles.page}>
+      <div className={styles.container}>
+        <article className={styles.article}>
+          <header className={styles.header}>
+            <Link href="/blog" className={`${styles.backLink} mono-font`}>
+              <ArrowLeft size={14} className={styles.backIcon} />
               Back
             </Link>
 
-            <div className="flex flex-col gap-6">
-              <span className="text-sm mono-font font-bold text-blue-600">
-                {post.date}
-              </span>
-              <h1 className="text-4xl md:text-6xl font-black tracking-tighter text-zinc-900 leading-tight">
-                {post.title}
-              </h1>
+            <div className={styles.meta}>
+              <span className={`${styles.date} mono-font`}>{post.date}</span>
+              <h1 className={styles.title}>{post.title}</h1>
             </div>
           </header>
 
-          <div className="blog-article-body max-w-md md:max-w-4xl" data-blog-article-body>
-            <PrismHighlighter>
-              {renderArticleHtml(post.content || post.description || '')}
-            </PrismHighlighter>
-          </div>
+          <ArticleBody>
+            {renderArticleHtml(post.content || post.description || '')}
+          </ArticleBody>
 
-          <div className="mt-40 pt-20 border-t border-zinc-100 flex justify-between items-center">
-            <Link
-              href="/blog"
-              className="text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-blue-600 transition-colors mono-font"
-            >
+          <div className={styles.footer}>
+            <Link href="/blog" className={`${styles.footerLink} mono-font`}>
               Back to list
             </Link>
-            <span className="text-[10px] mono-font text-zinc-300 uppercase tracking-widest">
-              End of entry
-            </span>
+            <span className={`${styles.footerNote} mono-font`}>End of entry</span>
           </div>
         </article>
       </div>

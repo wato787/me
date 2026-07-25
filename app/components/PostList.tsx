@@ -1,5 +1,7 @@
 import { getBlogs } from '../lib/microcms';
 
+import styles from './PostList.module.css';
+
 const formatDate = (dateString: string): string => {
   const date = new Date(dateString);
   const year = date.getFullYear();
@@ -11,26 +13,22 @@ const formatDate = (dateString: string): string => {
 const PostList = async () => {
   const blogs = await getBlogs();
   return (
-    <section id="blog" className="mb-64">
-      <div className="flex items-end justify-between mb-16">
-        <h2 className="text-[10px] uppercase tracking-[0.6em] text-blue-600 font-black">
-          LOG
-        </h2>
+    <section id="blog" className={styles.section}>
+      <div className={styles.header}>
+        <h2 className={styles.heading}>LOG</h2>
       </div>
       
-      <div className="space-y-0">
+      <div className={styles.list}>
         {blogs.map((blog) => (
           <a 
             key={blog.id} 
             href={`/blog/${blog.id}`}
-            className="group flex flex-col md:flex-row md:items-baseline gap-2 md:gap-12 py-8 border-b border-zinc-100 first:border-t"
+            className={styles.item}
           >
-            <span className="text-sm font-medium text-zinc-500 mono-font w-32 flex-shrink-0 transition-colors group-hover:text-zinc-600">
+            <span className={`${styles.date} mono-font`}>
               {formatDate(blog.createdAt)}
             </span>
-            <span className="text-xl md:text-2xl font-bold text-zinc-900 group-hover:text-blue-600 transition-colors duration-300">
-              {blog.title}
-            </span>
+            <span className={styles.title}>{blog.title}</span>
           </a>
         ))}
       </div>
@@ -39,4 +37,3 @@ const PostList = async () => {
 };
 
 export default PostList;
-

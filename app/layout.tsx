@@ -5,6 +5,8 @@ import "./globals.css";
 import Footer from "./components/Footer";
 import Header from "./components/Header";
 
+import styles from "./layout.module.css";
+
 const notoSansJP = Noto_Sans_JP({
   variable: "--font-noto-sans-jp",
   subsets: ["latin"],
@@ -30,16 +32,16 @@ export default function RootLayout({
   return (
     <html lang="ja">
       <body
-        className={`${notoSansJP.variable} ${jetbrainsMono.variable} antialiased`}
+        className={`${notoSansJP.variable} ${jetbrainsMono.variable}`}
         style={{ fontFamily: 'var(--font-noto-sans-jp), sans-serif' }}
       >
-    <div className="min-h-screen bg-white selection:bg-blue-600 selection:text-white antialiased">
-      <div className="max-w-4xl mx-auto px-6 relative z-10">
-        <Header />
-          {children}
-          <Footer />
+        <div className={styles.shell}>
+          <div className={styles.container}>
+            <Header />
+            {children}
+            <Footer />
+          </div>
         </div>
-      </div>
       </body>
     </html>
   );

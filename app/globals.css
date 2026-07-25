@@ -1,28 +1,31 @@
-@import "tailwindcss";
-
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-background: #ffffff;
+  --color-foreground: #171717;
+  --color-accent: #2563eb;
+  --color-accent-hover: #1d4ed8;
+  --color-accent-soft: #eff6ff;
+  --color-text: #27272a;
+  --color-text-strong: #18181b;
+  --color-text-subtle: #3f3f46;
+  --color-text-muted: #71717a;
+  --color-text-faint: #a1a1aa;
+  --color-text-placeholder: #d4d4d8;
+  --color-border: #e4e4e7;
+  --color-surface: #f4f4f5;
+  --container-max: 56rem;
+  --section-gap: 16rem;
+  --section-gap-sm: 10rem;
+  --bp-sm: 640px;
+  --bp-md: 768px;
+  --bp-lg: 1024px;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--color-background);
+  color: var(--color-foreground);
   scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 .mono-font {
@@ -45,16 +48,15 @@ code[class*="language-"] {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #e4e4e7;
+  background: var(--color-border);
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #2563eb;
+  background: var(--color-accent);
 }
 
-/* Selection color */
 ::selection {
-  background-color: #2563eb;
+  background-color: var(--color-accent);
   color: white;
 }

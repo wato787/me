@@ -4,6 +4,7 @@ import Link from 'next/link';
 import parse, { domToReact, type DOMNode, type HTMLReactParserOptions } from 'html-react-parser';
 import type { Element } from 'domhandler';
 
+import styles from '../components/ArticleBody/articleContent.module.css';
 import { optimizeImageUrl } from './microcms';
 
 const DEFAULT_CONTENT_IMAGE_WIDTH = 1200;
@@ -33,7 +34,6 @@ function ensureSafeRel(rel: string | undefined, { href, target }: { href: string
 }
 
 function optimizeContentImageSrc(src: string, width?: number, height?: number): string {
-  // microCMS の画像配信に最適化パラメータを付与（既存パラメータは上書き）
   if (src.includes('images.microcms-assets.io')) {
     return optimizeImageUrl(src, width ?? DEFAULT_CONTENT_IMAGE_WIDTH, height, 'webp');
   }
@@ -48,7 +48,6 @@ function escapeHtml(s: string): string {
     .replace(/"/g, '&quot;');
 }
 
-/** 許可するURLスキーム（相対・絶対・mailto・アンカー） */
 function isAllowedHref(url: string): boolean {
   const t = url.trim();
   return (
@@ -60,11 +59,6 @@ function isAllowedHref(url: string): boolean {
   );
 }
 
-/**
- * Markdown風のインライン記法をHTMLに変換
- * - [text](url) → <a href="url">text</a>（[]の中身を表示、()の中身をhrefに）
- * - `code` → <code>code</code>
- */
 function preprocessMarkdownInline(html: string): string {
   return html
     .replace(/\[([^\]]*)\]\s*\(\s*([^)]+)\s*\)/g, (_, text: string, url: string) => {
@@ -75,13 +69,6 @@ function preprocessMarkdownInline(html: string): string {
     .replace(/`([^`]+)`/g, (_, code: string) => `<code>${escapeHtml(code)}</code>`);
 }
 
-/**
- * microCMSの本文HTMLを React Node に変換する
- * - img -> next/image に置換
- * - a   -> 内部リンクは next/link、外部は rel を安全に補強
- * - script/style は除去
- * - iframe はレスポンシブ枠でラップ
- */
 export function renderArticleHtml(html: string): ReactNode {
   if (!html) return null;
 
@@ -90,7 +77,6 @@ export function renderArticleHtml(html: string): ReactNode {
       if (node.type !== 'tag') return;
       const el = node as unknown as Element;
 
-      // XSS/崩れ防止（microCMS側で管理していても念のため）
       if (el.name === 'script' || el.name === 'style') {
         return null;
       }
@@ -105,30 +91,29 @@ export function renderArticleHtml(html: string): ReactNode {
 
         const optimizedSrc = optimizeContentImageSrc(src, width, height);
 
-        // width/height が取れないHTMLもあるため、フォールバックを用意
         if (width && height) {
           return (
-            <span className="block my-10">
+            <span className={styles.mediaWrap}>
               <Image
                 src={optimizedSrc}
                 alt={alt}
                 width={width}
                 height={height}
                 sizes="(max-width: 768px) 100vw, 768px"
-                className="h-auto w-full rounded-lg border border-zinc-100"
+                className={styles.mediaImage}
               />
             </span>
           );
         }
 
         return (
-          <span className="block relative my-10 w-full aspect-[16/9]">
+          <span className={styles.mediaWrapAspect}>
             <Image
               src={optimizedSrc}
               alt={alt}
               fill
               sizes="100vw"
-              className="rounded-lg border border-zinc-100 object-contain"
+              className={styles.mediaImageFill}
             />
           </span>
         );
@@ -167,7 +152,7 @@ export function renderArticleHtml(html: string): ReactNode {
         const allow = el.attribs?.allow;
 
         return (
-          <div className="relative my-10 w-full aspect-video">
+          <div className={styles.embed}>
             <iframe
               src={src}
               title={title}
@@ -175,7 +160,7 @@ export function renderArticleHtml(html: string): ReactNode {
               allow={allow}
               allowFullScreen
               referrerPolicy="strict-origin-when-cross-origin"
-              className="absolute inset-0 h-full w-full rounded-lg border border-zinc-100"
+              className={styles.embedFrame}
             />
           </div>
         );
@@ -188,8 +173,6 @@ export function renderArticleHtml(html: string): ReactNode {
       }
 
       if (el.name === 'pre') {
-        // Prism のテーマCSSは pre/code の language-* クラスに紐づくため、
-        // 子の <code class="language-xxx"> があれば pre 側にも付与する。
         const firstCode = (el.children ?? []).find(
           (c): c is Element => {
             const maybeEl = c as unknown as Element;
@@ -204,12 +187,7 @@ export function renderArticleHtml(html: string): ReactNode {
         const children = domToReact(el.children as DOMNode[], options);
         return (
           <pre
-            className={[
-              'my-10 overflow-x-auto rounded-lg border border-zinc-100 bg-zinc-50 p-4 text-sm mono-font',
-              languageClass,
-            ]
-              .filter(Boolean)
-              .join(' ')}
+            className={[styles.codeBlock, languageClass].filter(Boolean).join(' ')}
           >
             {children}
           </pre>
@@ -220,4 +198,3 @@ export function renderArticleHtml(html: string): ReactNode {
 
   return parse(preprocessMarkdownInline(html), options);
 }
-
