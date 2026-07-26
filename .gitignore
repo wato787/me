@@ -21,6 +21,13 @@
 /.astro/
 /dist/
 
+# terraform
+**/.terraform/
+*.tfvars
+!*.tfvars.example
+crash.log
+crash.*.log
+
 # production
 /build
 

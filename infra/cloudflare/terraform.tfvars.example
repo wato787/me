@@ -1,0 +1,4 @@
+cloudflare_account_id = "00000000000000000000000000000000"
+cloudflare_zone_id    = "00000000000000000000000000000000"
+site_hostname         = "example.com"
+worker_name           = "me"
