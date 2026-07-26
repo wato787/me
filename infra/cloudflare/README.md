@@ -19,19 +19,45 @@ export TF_VAR_cloudflare_api_token="..."
 terraform plan
 ```
 
+## DNS レコードの import
+
+既存の `wato787.com` CNAME を Terraform 管理に入れる場合、初回だけ DNS record を import します。
+
+現在の目標状態は次の通りです。
+
+```txt
+wato787.com CNAME -> me.shantianlongxing20.workers.dev
+proxied = true
+```
+
+DNS record ID は Cloudflare API で確認できます。
+
+```bash
+curl -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
+  "https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_ZONE_ID/dns_records?type=CNAME&name=wato787.com"
+```
+
+record ID が分かったら import します。
+
+```bash
+terraform import cloudflare_dns_record.site "$CLOUDFLARE_ZONE_ID/$DNS_RECORD_ID"
+terraform plan
+```
+
+既存 record が Pages を向いている場合、`terraform plan` では `content` が `me-18t.pages.dev` から `me.shantianlongxing20.workers.dev` に変わる差分が出ます。
+
 ## デプロイ
 
 Worker Static Assets の deploy は repo root から実行します。
 
 ```bash
-bun run deploy
+mise run deploy
 ```
 
 Astro は build 時に microCMS を読むため、`MICROCMS_SERVICE_DOMAIN` と `MICROCMS_API_KEY` は Worker runtime secret ではなく build environment に設定してください。
 
 ## 次に管理する候補
 
-- DNS record
 - Worker custom domain / route
 - Web Analytics
 - 将来の Worker runtime vars
