@@ -58,7 +58,8 @@ function preprocessMarkdownInline(html: string): string {
       if (!isAllowedHref(href)) return original;
       return `<a href="${escapeHtml(href)}">${escapeHtml(text)}</a>`;
     })
-    .replace(/`([^`]+)`/g, (_, code: string) => `<code>${escapeHtml(code)}</code>`);
+    .replace(/`([^`]+)`/g, (_, code: string) => `<code>${escapeHtml(code)}</code>`)
+    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
 }
 
 export function renderArticleHtml(html: string): string {
