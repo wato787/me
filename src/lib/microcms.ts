@@ -1,8 +1,8 @@
 import { createClient } from 'microcms-js-sdk';
 
 export const client = createClient({
-  serviceDomain: process.env.MICROCMS_SERVICE_DOMAIN!,
-  apiKey: process.env.MICROCMS_API_KEY!,
+  serviceDomain: import.meta.env.MICROCMS_SERVICE_DOMAIN,
+  apiKey: import.meta.env.MICROCMS_API_KEY,
 });
 
 export interface Profile {
@@ -19,17 +19,16 @@ export interface Profile {
 }
 
 export async function getProfile(): Promise<Profile> {
-  const data = await client.get<Profile>({
+  return client.get<Profile>({
     endpoint: 'profile',
   });
-  return data;
 }
 
 export function optimizeImageUrl(
   url: string,
   width?: number,
   height?: number,
-  format: 'webp' | 'jpg' | 'png' = 'webp'
+  format: 'webp' | 'jpg' | 'png' = 'webp',
 ): string {
   try {
     const u = new URL(url);
@@ -39,7 +38,6 @@ export function optimizeImageUrl(
     u.searchParams.set('q', '80');
     return u.toString();
   } catch {
-    // URL() が扱えない形式（相対URLなど）の場合は従来の組み立てにフォールバック
     const params = new URLSearchParams();
     if (width) params.set('w', width.toString());
     if (height) params.set('h', height.toString());
@@ -72,12 +70,11 @@ export async function getBlogs(): Promise<Blog[]> {
 }
 
 export async function getBlogById(id: string): Promise<Blog> {
-  const data = await client.get<Blog>({
+  return client.get<Blog>({
     endpoint: 'blogs',
     contentId: id,
     queries: { richEditorFormat: 'html' },
   });
-  return data;
 }
 
 export interface Skill {
