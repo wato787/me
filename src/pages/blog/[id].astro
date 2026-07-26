@@ -212,6 +212,8 @@ const articleHtml = renderArticleHtml(post.content || post.description || '');
 
   .articleBody code {
     font-family: 'JetBrains Mono', monospace;
+    font-variant-ligatures: none;
+    font-feature-settings: 'liga' 0, 'calt' 0;
     font-size: 0.9em;
     padding: 0.15em 0.4em;
     background: var(--color-surface);
@@ -321,6 +323,8 @@ const articleHtml = renderArticleHtml(post.content || post.description || '');
     padding: 1rem;
     font-size: 0.875rem;
     font-family: 'JetBrains Mono', monospace;
+    font-variant-ligatures: none;
+    font-feature-settings: 'liga' 0, 'calt' 0;
   }
 </style>
 
