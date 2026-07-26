@@ -1,3 +1,5 @@
+@import 'prismjs/themes/prism.css';
+
 :root {
   --color-background: #ffffff;
   --color-foreground: #171717;
@@ -15,30 +17,43 @@
   --container-max: 56rem;
   --section-gap: 16rem;
   --section-gap-sm: 10rem;
-  --bp-sm: 640px;
-  --bp-md: 768px;
-  --bp-lg: 1024px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
+  margin: 0;
   background: var(--color-background);
   color: var(--color-foreground);
-  scroll-behavior: smooth;
+  font-family: 'Noto Sans JP', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-.mono-font {
-  font-family: var(--font-jetbrains-mono), monospace;
+a {
+  color: inherit;
+  text-decoration: none;
 }
 
-/* Prism: keep site background while highlighting */
-pre[class*="language-"],
-code[class*="language-"] {
+img {
+  max-width: 100%;
+}
+
+.mono-font {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+pre[class*='language-'],
+code[class*='language-'] {
   background: transparent;
 }
 
-/* Stoic scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
 }

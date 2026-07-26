@@ -1,0 +1,73 @@
+---
+import { Terminal } from 'lucide-astro';
+import { getProfile } from '../lib/microcms';
+
+const profile = await getProfile();
+---
+
+<header class="header">
+  <a href="/" class="logoLink">
+    <Terminal size={18} class="logoIcon" />
+    <span class="logoText mono-font">{profile.name}</span>
+  </a>
+  <nav>
+    <ul class="navList">
+      <li>
+        <a href="/blog" class="navLink">Blog</a>
+      </li>
+    </ul>
+  </nav>
+</header>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-block: 2rem;
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+  }
+
+  .logoLink {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .logoIcon {
+    color: var(--color-accent);
+  }
+
+  .logoText {
+    font-size: 0.875rem;
+    font-weight: 900;
+    letter-spacing: -0.05em;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+
+  .navList {
+    display: flex;
+    gap: 1.5rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-text-muted);
+  }
+
+  .navLink {
+    transition: color 0.2s;
+  }
+
+  .navLink:hover {
+    color: var(--color-text-strong);
+  }
+</style>
