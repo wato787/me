@@ -19,6 +19,11 @@ variable "site_hostname" {
   type        = string
 }
 
+variable "workers_dev_hostname" {
+  description = "Workers.dev hostname for the deployed site."
+  type        = string
+}
+
 variable "worker_name" {
   description = "Worker name managed by wrangler."
   type        = string
