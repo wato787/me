@@ -6,7 +6,7 @@
 
 - Next.js
 - TypeScript
-- Tailwind CSS
+- CSS Modules
 - microCMS
 
 ## Getting Started

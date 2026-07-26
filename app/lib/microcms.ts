@@ -7,7 +7,6 @@ export const client = createClient({
 
 export interface Profile {
   name: string;
-  introduction: string;
   area: string;
   description?: string;
   image?: {
@@ -93,4 +92,3 @@ export async function getSkills(): Promise<Skill[]> {
   });
   return data.contents;
 }
-
