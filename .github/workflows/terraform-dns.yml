@@ -1,0 +1,80 @@
+name: Terraform DNS
+
+on:
+  workflow_dispatch:
+    inputs:
+      apply:
+        description: Apply the Terraform plan
+        required: true
+        type: boolean
+        default: false
+
+concurrency:
+  group: terraform-dns
+  cancel-in-progress: false
+
+jobs:
+  dns:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    env:
+      TF_INPUT: "false"
+      TF_VAR_cloudflare_api_token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      TF_VAR_cloudflare_account_id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      TF_VAR_cloudflare_zone_id: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+      TF_VAR_site_hostname: wato787.com
+      TF_VAR_workers_dev_hostname: me.shantianlongxing20.workers.dev
+      TF_VAR_worker_name: me
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ZONE_ID: ${{ secrets.CLOUDFLARE_ZONE_ID }}
+      SITE_HOSTNAME: wato787.com
+    defaults:
+      run:
+        working-directory: infra/cloudflare
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v4
+        with:
+          terraform_version: 1.14.6
+          terraform_wrapper: false
+
+      - name: Terraform init
+        run: terraform init
+
+      - name: Terraform fmt
+        run: terraform fmt -check -recursive .
+
+      - name: Terraform validate
+        run: terraform validate
+
+      - name: Resolve DNS record id
+        id: dns-record
+        run: |
+          response="$(curl -fsS \
+            -H "Authorization: Bearer ${CLOUDFLARE_API_TOKEN}" \
+            "https://api.cloudflare.com/client/v4/zones/${CLOUDFLARE_ZONE_ID}/dns_records?type=CNAME&name=${SITE_HOSTNAME}")"
+          record_id="$(jq -r '.result[0].id // empty' <<< "$response")"
+          if [ -z "$record_id" ]; then
+            echo "No CNAME record found for ${SITE_HOSTNAME}" >&2
+            exit 1
+          fi
+          echo "id=${record_id}" >> "$GITHUB_OUTPUT"
+
+      - name: Import DNS record if needed
+        run: |
+          if terraform state show cloudflare_dns_record.site >/dev/null 2>&1; then
+            echo "cloudflare_dns_record.site is already in state"
+          else
+            terraform import cloudflare_dns_record.site "${CLOUDFLARE_ZONE_ID}/${{ steps.dns-record.outputs.id }}"
+          fi
+
+      - name: Terraform plan
+        run: terraform plan -out=tfplan
+
+      - name: Terraform apply
+        if: ${{ inputs.apply }}
+        run: terraform apply -auto-approve tfplan
