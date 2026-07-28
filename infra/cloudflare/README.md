@@ -19,9 +19,9 @@ export TF_VAR_cloudflare_api_token="..."
 terraform plan
 ```
 
-## DNS レコードの import
+## DNS レコードの初回適用
 
-既存の `wato787.com` CNAME を Terraform 管理に入れる場合、初回だけ DNS record を import します。
+`cloudflare_dns_record.site` は `wato787.com` の CNAME を新規作成する前提です。既存の Pages 向け CNAME は import せず、Cloudflare Dashboard で削除してから Terraform で作成します。
 
 現在の目標状態は次の通りです。
 
@@ -30,21 +30,41 @@ wato787.com CNAME -> me.shantianlongxing20.workers.dev
 proxied = true
 ```
 
-DNS record ID は Cloudflare API で確認できます。
+まず plan で、`cloudflare_dns_record.site` が 1 件だけ作成されることを確認します。
 
 ```bash
-curl -H "Authorization: Bearer $CLOUDFLARE_API_TOKEN" \
-  "https://api.cloudflare.com/client/v4/zones/$CLOUDFLARE_ZONE_ID/dns_records?type=CNAME&name=wato787.com"
-```
-
-record ID が分かったら import します。
-
-```bash
-terraform import cloudflare_dns_record.site "$CLOUDFLARE_ZONE_ID/$DNS_RECORD_ID"
 terraform plan
 ```
 
-既存 record が Pages を向いている場合、`terraform plan` では `content` が `me-18t.pages.dev` から `me.shantianlongxing20.workers.dev` に変わる差分が出ます。
+期待する主な差分:
+
+```txt
++ cloudflare_dns_record.site
+  name    = "wato787.com"
+  type    = "CNAME"
+  content = "me.shantianlongxing20.workers.dev"
+  proxied = true
+```
+
+問題なければ、Cloudflare Dashboard で既存の CNAME を削除します。
+
+```txt
+wato787.com CNAME -> me-18t.pages.dev
+```
+
+削除後、すぐに Terraform で作成します。
+
+```bash
+terraform apply
+```
+
+適用後、Terraform state と本番 URL を確認します。
+
+```bash
+terraform state list
+curl -I https://wato787.com/
+curl -I https://wato787.com/blog/
+```
 
 ## デプロイ
 
