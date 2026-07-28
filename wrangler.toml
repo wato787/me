@@ -5,3 +5,7 @@ compatibility_date = "2026-07-26"
 directory = "./dist"
 html_handling = "auto-trailing-slash"
 not_found_handling = "404-page"
+
+[[routes]]
+pattern = "wato787.com"
+custom_domain = true
