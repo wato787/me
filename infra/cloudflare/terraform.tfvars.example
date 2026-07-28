@@ -1,5 +1,0 @@
-cloudflare_account_id = "00000000000000000000000000000000"
-cloudflare_zone_id    = "00000000000000000000000000000000"
-site_hostname         = "wato787.com"
-workers_dev_hostname = "me.shantianlongxing20.workers.dev"
-worker_name           = "me"
