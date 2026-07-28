@@ -55,6 +55,7 @@ Build environment には次の値を設定します。値そのものは reposit
 ```txt
 MICROCMS_SERVICE_DOMAIN
 MICROCMS_API_KEY
+PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN
 ```
 
 PR や main 以外の branch で preview build を使う場合も、microCMS を読むために同じ build environment が必要です。
@@ -70,7 +71,12 @@ HTTP method: POST
 
 Deploy Hook URL は secret として扱います。repository や公開ドキュメントには貼り付けません。
 
+## Web Analytics
+
+Cloudflare Web Analytics は `src/layouts/BaseLayout.astro` で全ページに beacon script を埋め込みます。`PUBLIC_CLOUDFLARE_WEB_ANALYTICS_TOKEN` が未設定の場合は script を出力しません。
+
+Site token は Cloudflare Dashboard の Web Analytics で作成し、Workers Builds の build environment に設定します。この token はブラウザに配信される公開値ですが、環境ごとに差し替えられるよう repository には直書きしません。
+
 ## 次に管理する候補
 
-- Web Analytics
 - 将来の Worker runtime vars
