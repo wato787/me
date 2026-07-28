@@ -38,6 +38,38 @@ Astro は build 時に microCMS を読むため、`MICROCMS_SERVICE_DOMAIN` と 
 
 初回の Custom Domain 作成前に、同じ hostname の既存 DNS record や Pages custom domain が残っている場合は Cloudflare Dashboard で削除してください。
 
+## 自動デプロイ
+
+Cloudflare Workers Builds で GitHub repository を Worker `me` に接続しています。`main` への push/merge を production deploy のトリガーにします。
+
+Build / deploy の設定は Cloudflare Dashboard の `Workers & Pages > me > Settings > Builds` で管理します。
+
+```txt
+Production branch: main
+Build command: bun install && bun run build
+Deploy command: bunx wrangler deploy
+```
+
+Build environment には次の値を設定します。値そのものは repository に commit しません。
+
+```txt
+MICROCMS_SERVICE_DOMAIN
+MICROCMS_API_KEY
+```
+
+PR や main 以外の branch で preview build を使う場合も、microCMS を読むために同じ build environment が必要です。
+
+## microCMS Webhook
+
+microCMS のコンテンツ更新時は Cloudflare Workers Deploy Hook を呼び出して rebuild します。Deploy Hook は Cloudflare Dashboard の `Workers & Pages > me > Settings > Builds > Deploy Hooks` で作成します。
+
+```txt
+Hook target branch: main
+HTTP method: POST
+```
+
+Deploy Hook URL は secret として扱います。repository や公開ドキュメントには貼り付けません。
+
 ## 次に管理する候補
 
 - Web Analytics

@@ -14,7 +14,7 @@
 mise run dev
 ```
 
-Open [http://localhost:4321](http://localhost:4321) with your browser to see the result.
+ブラウザで [http://localhost:4321](http://localhost:4321) を開いて確認します。
 
 ## Tasks
 
@@ -25,14 +25,16 @@ mise run build
 mise run verify
 ```
 
-## Deploy
+## デプロイ
 
-This site is built with Astro and deployed as Cloudflare Workers Static Assets.
+このサイトは Astro で静的ビルドし、Cloudflare Workers Static Assets にデプロイします。
 
 ```bash
 mise run deploy
 ```
 
-`MICROCMS_SERVICE_DOMAIN` and `MICROCMS_API_KEY` are required at build time.
+Astro は build 時に microCMS を読むため、`MICROCMS_SERVICE_DOMAIN` と `MICROCMS_API_KEY` が build environment に必要です。Worker runtime secret ではありません。
 
-Cloudflare infrastructure notes live in [infra/cloudflare](infra/cloudflare).
+本番運用では Cloudflare Workers Builds を使い、`main` への push/merge で自動デプロイします。microCMS の記事更新は Cloudflare Workers Deploy Hook に webhook で接続し、content 変更時に rebuild します。
+
+Cloudflare 側の設定メモは [infra/cloudflare](infra/cloudflare) にあります。
