@@ -266,7 +266,14 @@
   background: var(--color-surface);
   padding: 1rem;
   font-size: 0.875rem;
+  line-height: 1.7;
   font-family: 'JetBrains Mono', monospace;
   font-variant-ligatures: none;
   font-feature-settings: 'liga' 0, 'calt' 0;
+}
+
+.articleBody .codeBlock code {
+  display: block;
+  min-width: max-content;
+  white-space: pre;
 }

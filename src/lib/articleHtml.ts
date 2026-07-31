@@ -95,14 +95,19 @@ export function renderArticleHtml(html: string): string {
       if (!href) return tag;
       return `<a${ensureSafeRel(attributes, href)}>`;
     })
+    .replace(/<pre\b([^>]*)>\s*<code\b([^>]*)>/gi, (_tag, preAttributes: string, codeAttributes: string) => {
+      const className = getAttribute(codeAttributes, 'class') ?? '';
+      const languageClass = className.split(/\s+/).find((token) => token.startsWith('language-'));
+      const cleanPreAttributes = preAttributes.replace(/\sclass=(["']).*?\1/i, '');
+      const cleanCodeAttributes = codeAttributes.replace(/\sclass=(["']).*?\1/i, '');
+      const preClassName = languageClass ? `codeBlock ${languageClass}` : 'codeBlock';
+
+      return `<pre${cleanPreAttributes} class="${preClassName}"><code${cleanCodeAttributes}${className ? ` class="${className}"` : ''}>`;
+    })
     .replace(/<code\b([^>]*)>/gi, (_tag, attributes: string) => {
       const className = getAttribute(attributes, 'class');
       const nextClassName = className ? `${className} mono-font` : 'mono-font';
       const cleanAttributes = attributes.replace(/\sclass=(["']).*?\1/i, '');
       return `<code${cleanAttributes} class="${nextClassName}">`;
-    })
-    .replace(/<pre>\s*<code class="([^"]*\blanguage-[^"]*)/gi, (_tag, className: string) => {
-      const languageClass = className.split(/\s+/).find((token) => token.startsWith('language-'));
-      return `<pre class="codeBlock ${languageClass ?? ''}"><code class="${className}`;
     });
 }
