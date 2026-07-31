@@ -215,6 +215,10 @@
   color: var(--color-text-strong);
 }
 
+.articleBody figure {
+  margin: 0;
+}
+
 .articleBody .mediaWrap {
   display: block;
   margin-block: 2.5rem;
