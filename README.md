@@ -36,5 +36,3 @@ mise run deploy
 Astro は build 時に microCMS を読むため、`MICROCMS_SERVICE_DOMAIN` と `MICROCMS_API_KEY` が build environment に必要です。Worker runtime secret ではありません。
 
 本番運用では Cloudflare Workers Builds を使い、`main` への push/merge で自動デプロイします。microCMS の記事更新は Cloudflare Workers Deploy Hook に webhook で接続し、content 変更時に rebuild します。
-
-Cloudflare 側の設定メモは [infra/cloudflare](infra/cloudflare) にあります。

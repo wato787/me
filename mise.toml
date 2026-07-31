@@ -26,14 +26,6 @@ description = "Validate the Workers Static Assets deployment without uploading"
 depends = ["build"]
 run = "./node_modules/.bin/wrangler deploy --dry-run"
 
-[tasks."tf:fmt"]
-description = "Check Terraform formatting"
-run = "terraform fmt -check -recursive infra/cloudflare"
-
-[tasks."tf:validate"]
-description = "Validate the Cloudflare Terraform scaffold"
-run = "terraform -chdir=infra/cloudflare validate"
-
 [tasks.verify]
-description = "Run local checks for site, Workers config, and Terraform"
-depends = ["check", "build", "wrangler:dry-run", "tf:fmt", "tf:validate"]
+description = "Run local checks for site and Workers config"
+depends = ["check", "build", "wrangler:dry-run"]
