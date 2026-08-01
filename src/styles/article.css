@@ -70,21 +70,31 @@
   }
 }
 
-.articleBody h4,
-.articleBody h5,
-.articleBody h6 {
+.articleBody h4 {
   font-size: 1rem;
-  font-weight: 600;
-  color: var(--color-text-subtle);
+  font-weight: 700;
+  color: var(--color-text);
   margin-top: 1.5em;
   margin-bottom: 0.35em;
 }
 
+.articleBody h5,
+.articleBody h6 {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-text-subtle);
+  margin-top: 1.4em;
+  margin-bottom: 0.3em;
+}
+
 @media (min-width: 768px) {
-  .articleBody h4,
+  .articleBody h4 {
+    font-size: 1.125rem;
+  }
+
   .articleBody h5,
   .articleBody h6 {
-    font-size: 1.125rem;
+    font-size: 1rem;
   }
 }
 
