@@ -278,7 +278,8 @@
   overflow-x: auto;
   border-radius: 0.5rem;
   border: 1px solid var(--color-border);
-  background: var(--color-surface);
+  background: #f8fafc;
+  color: #1f2937;
   padding: 1rem;
   font-size: 0.875rem;
   line-height: 1.7;
@@ -291,4 +292,43 @@
   display: block;
   min-width: max-content;
   white-space: pre;
+}
+
+.articleBody .th-comment {
+  color: #64748b;
+  font-style: italic;
+}
+
+.articleBody .th-keyword,
+.articleBody .th-operator {
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.articleBody .th-string,
+.articleBody .th-literal,
+.articleBody .th-inserted {
+  color: #047857;
+}
+
+.articleBody .th-function,
+.articleBody .th-command {
+  color: #9333ea;
+}
+
+.articleBody .th-number,
+.articleBody .th-attr {
+  color: #c2410c;
+}
+
+.articleBody .th-property,
+.articleBody .th-variable,
+.articleBody .th-selector,
+.articleBody .th-tag,
+.articleBody .th-type {
+  color: #0f766e;
+}
+
+.articleBody .th-deleted {
+  color: #dc2626;
 }

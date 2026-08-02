@@ -1,3 +1,4 @@
+import { highlightCodeBlock } from './highlight';
 import { optimizeImageUrl } from './microcms';
 
 const DEFAULT_CONTENT_IMAGE_WIDTH = 1200;
@@ -8,6 +9,18 @@ function escapeHtml(s: string): string {
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
+}
+
+function decodeHtmlEntities(s: string): string {
+  return s
+    .replace(/&#(\d+);/g, (_entity, code: string) => String.fromCodePoint(Number.parseInt(code, 10)))
+    .replace(/&#x([\da-f]+);/gi, (_entity, code: string) => String.fromCodePoint(Number.parseInt(code, 16)))
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&apos;/g, "'")
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&');
 }
 
 function isAllowedHref(url: string): boolean {
@@ -49,6 +62,24 @@ function optimizeContentImageSrc(src: string, width?: number, height?: number): 
     return optimizeImageUrl(src, width ?? DEFAULT_CONTENT_IMAGE_WIDTH, height, 'webp');
   }
   return src;
+}
+
+function renderCodeBlock(preAttributes: string, codeAttributes: string, codeHtml: string): string {
+  const codeClassName = getAttribute(codeAttributes, 'class') ?? '';
+  const languageClass = codeClassName.split(/\s+/).find((token) => token.startsWith('language-'));
+  const language = languageClass?.replace(/^language-/, '');
+  const highlightedHtml = highlightCodeBlock(decodeHtmlEntities(codeHtml), language);
+  const preClassName = getAttribute(preAttributes, 'class');
+
+  if (!preClassName) return highlightedHtml.replace('<pre class="', '<pre class="codeBlock ');
+
+  const cleanPreClassName = preClassName
+    .split(/\s+/)
+    .filter((token) => token && token !== 'codeBlock')
+    .join(' ');
+  const className = cleanPreClassName ? `codeBlock ${cleanPreClassName}` : 'codeBlock';
+
+  return highlightedHtml.replace('<pre class="', `<pre class="${className} `);
 }
 
 function preprocessMarkdownInline(html: string): string {
@@ -95,15 +126,11 @@ export function renderArticleHtml(html: string): string {
       if (!href) return tag;
       return `<a${ensureSafeRel(attributes, href)}>`;
     })
-    .replace(/<pre\b([^>]*)>\s*<code\b([^>]*)>/gi, (_tag, preAttributes: string, codeAttributes: string) => {
-      const className = getAttribute(codeAttributes, 'class') ?? '';
-      const languageClass = className.split(/\s+/).find((token) => token.startsWith('language-'));
-      const cleanPreAttributes = preAttributes.replace(/\sclass=(["']).*?\1/i, '');
-      const cleanCodeAttributes = codeAttributes.replace(/\sclass=(["']).*?\1/i, '');
-      const preClassName = languageClass ? `codeBlock ${languageClass}` : 'codeBlock';
-
-      return `<pre${cleanPreAttributes} class="${preClassName}"><code${cleanCodeAttributes}${className ? ` class="${className}"` : ''}>`;
-    })
+    .replace(
+      /<pre\b([^>]*)>\s*<code\b([^>]*)>([\s\S]*?)<\/code>\s*<\/pre>/gi,
+      (_tag, preAttributes: string, codeAttributes: string, codeHtml: string) =>
+        renderCodeBlock(preAttributes, codeAttributes, codeHtml),
+    )
     .replace(/<code\b([^>]*)>/gi, (_tag, attributes: string) => {
       const className = getAttribute(attributes, 'class');
       const nextClassName = className ? `${className} mono-font` : 'mono-font';
