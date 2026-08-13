@@ -7,7 +7,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
-    "lint:react": "oxlint --react-plugin --react-perf-plugin src/components/SlideViewer.tsx",
+    "lint:react": "oxlint --react-plugin --react-perf-plugin src/components/SlideViewer.tsx src/components/SlidesGallery.tsx",
     "deploy": "bun run build && wrangler deploy"
   },
   "dependencies": {

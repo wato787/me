@@ -1,9 +1,16 @@
-import { ChevronLeft, ChevronRight, Expand } from 'lucide-react';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+
+export interface SlideDeck {
+  id: string;
+  title: string;
+  date: string;
+  slides: string[];
+}
 
 interface SlideViewerProps {
-  slides: string[];
-  title: string;
+  deck: SlideDeck;
+  onClose: () => void;
+  onReady: (overlay: HTMLElement) => void;
 }
 
 const getIndexFromHash = (length: number): number => {
@@ -23,15 +30,15 @@ const updateHash = (index: number): void => {
   const nextHash = `#${index + 1}`;
   if (window.location.hash === nextHash) return;
 
-  window.history.pushState(null, '', `${window.location.pathname}${window.location.search}${nextHash}`);
+  window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}${nextHash}`);
 };
 
-const SlideViewer = ({ slides, title }: SlideViewerProps) => {
-  const rootRef = useRef<HTMLElement>(null);
+const SlideViewer = ({ deck, onClose, onReady }: SlideViewerProps) => {
+  const overlayRef = useRef<HTMLElement>(null);
   const touchStartXRef = useRef<number | null>(null);
-  const [currentIndex, setCurrentIndex] = useState(() => getIndexFromHash(slides.length));
-  const lastIndex = Math.max(slides.length - 1, 0);
-  const currentSlide = slides[currentIndex] ?? '';
+  const [currentIndex, setCurrentIndex] = useState(() => getIndexFromHash(deck.slides.length));
+  const lastIndex = Math.max(deck.slides.length - 1, 0);
+  const currentSlide = deck.slides[currentIndex] ?? '';
 
   const goTo = useCallback(
     (nextIndex: number) => {
@@ -45,14 +52,26 @@ const SlideViewer = ({ slides, title }: SlideViewerProps) => {
   const goPrevious = useCallback(() => goTo(currentIndex - 1), [currentIndex, goTo]);
   const goNext = useCallback(() => goTo(currentIndex + 1), [currentIndex, goTo]);
 
+  const close = useCallback(async () => {
+    if (document.fullscreenElement) {
+      await document.exitFullscreen();
+    }
+    onClose();
+  }, [onClose]);
+
   const handleKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
     if (event.metaKey || event.ctrlKey || event.altKey) return;
+    if (event.key === 'Escape') {
+      event.preventDefault();
+      void close();
+      return;
+    }
     if (event.key === 'ArrowLeft') {
       event.preventDefault();
       goPrevious();
       return;
     }
-    if (event.key === 'ArrowRight') {
+    if (event.key === 'ArrowRight' || event.key === ' ') {
       event.preventDefault();
       goNext();
     }
@@ -79,22 +98,32 @@ const SlideViewer = ({ slides, title }: SlideViewerProps) => {
     goNext();
   };
 
-  const handleFullscreen = async () => {
-    const element = rootRef.current;
-    if (!element || !document.fullscreenEnabled) return;
+  useEffect(() => {
+    const overlay = overlayRef.current;
+    if (!overlay) return;
 
-    if (document.fullscreenElement) {
-      await document.exitFullscreen();
-      return;
-    }
+    overlay.focus();
+    onReady(overlay);
+  }, [onReady]);
 
-    await element.requestFullscreen();
-    element.focus();
-  };
+  useEffect(() => {
+    updateHash(currentIndex);
+  }, [currentIndex]);
 
-  if (slides.length === 0) {
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      if (!document.fullscreenElement) {
+        onClose();
+      }
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
+  }, [onClose]);
+
+  if (deck.slides.length === 0) {
     return (
-      <section className="slideViewer" aria-label={`${title} のスライド`}>
+      <section className="slideOverlay" aria-label={`${deck.title} のスライド`}>
         <p className="empty">スライド本文がまだありません。</p>
       </section>
     );
@@ -102,22 +131,15 @@ const SlideViewer = ({ slides, title }: SlideViewerProps) => {
 
   return (
     <section
-      ref={rootRef}
-      className="slideViewer"
-      aria-label={`${title} のスライド`}
+      ref={overlayRef}
+      className="slideOverlay"
+      aria-label={`${deck.title} のスライド`}
       tabIndex={0}
       onKeyDown={handleKeyDown}
-      onClick={() => rootRef.current?.focus()}
       onTouchStart={handleTouchStart}
       onTouchEnd={handleTouchEnd}
     >
-      <div className="viewerTop">
-        <a href="/slides" className="backLink mono-font">
-          Slides
-        </a>
-        <h1 className="deckTitle">{title}</h1>
-      </div>
-
+      <button type="button" className="overlayBackdrop" aria-label="スライドを閉じる" onClick={() => void close()} />
       <div className="slideStage">
         <article
           className="articleBody slideBody"
@@ -125,43 +147,8 @@ const SlideViewer = ({ slides, title }: SlideViewerProps) => {
           dangerouslySetInnerHTML={{ __html: currentSlide }}
         />
       </div>
-
-      <div className="slideControls">
-        <button
-          type="button"
-          className="controlButton"
-          onClick={goPrevious}
-          disabled={currentIndex === 0}
-          aria-label="前のスライド"
-          title="前のスライド"
-        >
-          <ChevronLeft size={16} aria-hidden="true" />
-        </button>
-
-        <span className="slideCounter mono-font" aria-live="polite">
-          {currentIndex + 1} / {slides.length}
-        </span>
-
-        <button
-          type="button"
-          className="controlButton"
-          onClick={goNext}
-          disabled={currentIndex === lastIndex}
-          aria-label="次のスライド"
-          title="次のスライド"
-        >
-          <ChevronRight size={16} aria-hidden="true" />
-        </button>
-
-        <button
-          type="button"
-          className="controlButton"
-          onClick={handleFullscreen}
-          aria-label="全画面表示"
-          title="全画面表示"
-        >
-          <Expand size={16} aria-hidden="true" />
-        </button>
+      <div className="slideProgress mono-font" aria-live="polite">
+        {currentIndex + 1} / {deck.slides.length}
       </div>
     </section>
   );

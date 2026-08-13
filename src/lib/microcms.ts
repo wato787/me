@@ -91,6 +91,7 @@ export async function getSlides(): Promise<Slide[]> {
     endpoint: 'slides',
     queries: {
       orders: '-createdAt',
+      richEditorFormat: 'html',
     },
   });
   return data.contents;
