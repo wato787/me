@@ -1,5 +1,5 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useEffectEvent, useState } from 'react';
 
 interface SlideViewerProps {
   slides: string[];
@@ -21,7 +21,7 @@ export default function SlideViewer({ slides, title }: SlideViewerProps) {
   const lastIndex = Math.max(slides.length - 1, 0);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const currentSlide = useMemo(() => slides[currentIndex] ?? '', [currentIndex, slides]);
+  const currentSlide = slides[currentIndex] ?? '';
 
   const goTo = useCallback(
     (nextIndex: number, replace = false) => {
@@ -47,14 +47,27 @@ export default function SlideViewer({ slides, title }: SlideViewerProps) {
   const goPrevious = useCallback(() => goTo(currentIndex - 1), [currentIndex, goTo]);
   const goNext = useCallback(() => goTo(currentIndex + 1), [currentIndex, goTo]);
 
+  const syncIndexFromUrl = useEffectEvent(() => {
+    setCurrentIndex(getIndexFromHash(slides.length));
+  });
+
+  const handleGlobalKeyDown = useEffectEvent((event: KeyboardEvent) => {
+    if (event.metaKey || event.ctrlKey || event.altKey) return;
+    if (event.key === 'ArrowLeft') {
+      event.preventDefault();
+      goPrevious();
+      return;
+    }
+    if (event.key === 'ArrowRight') {
+      event.preventDefault();
+      goNext();
+    }
+  });
+
   useEffect(() => {
     if (slides.length === 0) return;
 
     goTo(getIndexFromHash(slides.length), true);
-
-    const syncIndexFromUrl = () => {
-      setCurrentIndex(getIndexFromHash(slides.length));
-    };
 
     window.addEventListener('hashchange', syncIndexFromUrl);
     window.addEventListener('popstate', syncIndexFromUrl);
@@ -66,20 +79,12 @@ export default function SlideViewer({ slides, title }: SlideViewerProps) {
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.metaKey || event.ctrlKey || event.altKey) return;
-      if (event.key === 'ArrowLeft') {
-        event.preventDefault();
-        goPrevious();
-      }
-      if (event.key === 'ArrowRight') {
-        event.preventDefault();
-        goNext();
-      }
+      handleGlobalKeyDown(event);
     };
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [goNext, goPrevious]);
+  }, []);
 
   if (slides.length === 0) {
     return (
