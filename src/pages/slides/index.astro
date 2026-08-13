@@ -1,9 +1,8 @@
 ---
-import SlidesGallery from '../../components/SlidesGallery';
+import SlidesGallery, { type SlideCardDeck } from '../../components/SlidesGallery';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { formatDateMdDot } from '../../lib/date';
 import { getSlides } from '../../lib/microcms';
-import { renderSlideHtml } from '../../lib/slideHtml';
 import '../../styles/slideViewer.css';
 
 const slides = await getSlides();
@@ -11,8 +10,19 @@ const decks = slides.map((slide) => ({
   id: slide.id,
   title: slide.title,
   date: formatDateMdDot(slide.createdAt),
-  slides: renderSlideHtml(slide.content || ''),
+  year: new Date(slide.createdAt).getFullYear().toString(),
 }));
+
+const groupDecksByYear = (items: (SlideCardDeck & { year: string })[]) => {
+  const grouped: Record<string, (SlideCardDeck & { year: string })[]> = {};
+  items.forEach((deck) => {
+    grouped[deck.year] ??= [];
+    grouped[deck.year].push(deck);
+  });
+  return grouped;
+};
+
+const groupedDecks = groupDecksByYear(decks);
 ---
 
 <BaseLayout title="SLIDES | wato787" description="これまでに作成したスライドの一覧です。">
@@ -22,7 +32,22 @@ const decks = slides.map((slide) => ({
       <p class="subtitle">これまでに作成したスライドの一覧です。</p>
     </header>
 
-    <SlidesGallery client:load decks={decks} />
+    <div class="years">
+      {
+        Object.entries(groupedDecks)
+          .sort(([yearA], [yearB]) => parseInt(yearB) - parseInt(yearA))
+          .map(([year, yearDecks]) => (
+            <section>
+              <div class="yearHeader">
+                <span class="yearLabel mono-font">{year}</span>
+                <div class="yearLine"></div>
+              </div>
+
+              <SlidesGallery client:load decks={yearDecks.map(({ year: _year, ...deck }) => deck)} />
+            </section>
+          ))
+      }
+    </div>
   </div>
 </BaseLayout>
 
@@ -56,5 +81,30 @@ const decks = slides.map((slide) => ({
     color: var(--color-text-muted);
     font-size: 0.875rem;
     font-weight: 500;
+  }
+
+  .years {
+    display: flex;
+    flex-direction: column;
+    gap: 8rem;
+  }
+
+  .yearHeader {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 4rem;
+  }
+
+  .yearLabel {
+    font-size: 0.75rem;
+    font-weight: 900;
+    color: var(--color-accent);
+  }
+
+  .yearLine {
+    height: 1px;
+    flex-grow: 1;
+    background: var(--color-border);
   }
 </style>
