@@ -1,157 +1,60 @@
 ---
-import { ArrowUpRight } from 'lucide-astro';
+import SlidesGallery from '../../components/SlidesGallery';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { formatDateMdDot } from '../../lib/date';
 import { getSlides } from '../../lib/microcms';
+import { renderSlideHtml } from '../../lib/slideHtml';
+import '../../styles/slideViewer.css';
 
 const slides = await getSlides();
+const decks = slides.map((slide) => ({
+  id: slide.id,
+  title: slide.title,
+  date: formatDateMdDot(slide.createdAt),
+  slides: renderSlideHtml(slide.content || ''),
+}));
 ---
 
 <BaseLayout title="SLIDES | wato787" description="これまでに作成したスライドの一覧です。">
   <div class="page">
     <header class="header">
-      <p class="eyebrow mono-font">Archive</p>
       <h1 class="title">SLIDES</h1>
+      <p class="subtitle">これまでに作成したスライドの一覧です。</p>
     </header>
 
-    {
-      slides.length > 0 ? (
-        <div class="grid">
-          {slides.map((slide, index) => (
-            <a href={`/slides/${slide.id}`} class="card" style={`--card-index: ${index % 6}`}>
-              <article>
-                <div class="cardMeta">
-                  <span class="date mono-font">{formatDateMdDot(slide.createdAt)}</span>
-                  <ArrowUpRight size={16} class="icon" />
-                </div>
-                <h2 class="cardTitle">{slide.title}</h2>
-              </article>
-            </a>
-          ))}
-        </div>
-      ) : (
-        <p class="empty">スライドはまだありません。</p>
-      )
-    }
+    <SlidesGallery client:load decks={decks} />
   </div>
 </BaseLayout>
 
 <style>
   .page {
     min-height: 100vh;
+    background: var(--color-background);
     padding-block: 5rem 8rem;
   }
 
   .header {
-    margin-bottom: 4rem;
-  }
-
-  .eyebrow {
-    margin-bottom: 1rem;
-    color: var(--color-accent);
-    font-size: 0.75rem;
-    font-weight: 900;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
+    margin-bottom: 8rem;
   }
 
   .title {
-    color: var(--color-text-strong);
-    font-size: 4rem;
+    font-size: 3.75rem;
     font-weight: 900;
-    letter-spacing: 0;
-    line-height: 0.95;
+    letter-spacing: -0.05em;
+    color: var(--color-text-strong);
+    line-height: 1;
+    margin-bottom: 1.5rem;
   }
 
   @media (min-width: 768px) {
     .title {
-      font-size: 7rem;
+      font-size: 6rem;
     }
   }
 
-  .grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
-  }
-
-  @media (min-width: 720px) {
-    .grid {
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-  }
-
-  @media (min-width: 1040px) {
-    .grid {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-    }
-  }
-
-  .card {
-    display: block;
-    min-height: 14rem;
-    border: 1px solid var(--color-border);
-    border-radius: 0.5rem;
-    background:
-      linear-gradient(135deg, rgba(37, 99, 235, calc(0.04 + var(--card-index) * 0.005)), transparent 45%),
-      #fff;
-    transition:
-      border-color 0.2s,
-      transform 0.2s,
-      box-shadow 0.2s;
-  }
-
-  .card:hover {
-    border-color: var(--color-accent);
-    transform: translateY(-0.25rem);
-    box-shadow: 0 1.5rem 3rem rgba(24, 24, 27, 0.08);
-  }
-
-  .card article {
-    display: flex;
-    min-height: 14rem;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 1.25rem;
-  }
-
-  .cardMeta {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-  }
-
-  .date {
-    color: var(--color-text-faint);
-    font-size: 10px;
-    font-weight: 900;
-    letter-spacing: 0.1em;
-  }
-
-  .icon {
-    color: var(--color-text-placeholder);
-    transition:
-      color 0.2s,
-      transform 0.2s;
-  }
-
-  .card:hover .icon {
-    color: var(--color-accent);
-    transform: translate(0.125rem, -0.125rem);
-  }
-
-  .cardTitle {
-    color: var(--color-text-strong);
-    font-size: 1.75rem;
-    font-weight: 900;
-    letter-spacing: 0;
-    line-height: 1.1;
-  }
-
-  .empty {
+  .subtitle {
     color: var(--color-text-muted);
-    font-size: 0.9375rem;
-    line-height: 1.75;
+    font-size: 0.875rem;
+    font-weight: 500;
   }
 </style>
