@@ -1,8 +1,6 @@
 ---
-import { ArrowLeft } from 'lucide-astro';
 import SlideViewer from '../../components/SlideViewer';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { formatDateYmd } from '../../lib/date';
 import { getSlideById, getSlides, type Slide } from '../../lib/microcms';
 import { renderSlideHtml } from '../../lib/slideHtml';
 import '../../styles/article.css';
@@ -23,178 +21,29 @@ if (!slide.content) {
   slide = await getSlideById(id as string);
 }
 
-const deck = {
-  ...slide,
-  date: formatDateYmd(slide.createdAt),
-};
-const slideHtmlList = renderSlideHtml(deck.content || '');
-const description = deck.description ?? 'wato787のスライドです。';
+const slideHtmlList = renderSlideHtml(slide.content || '');
+const description = 'wato787のスライドです。';
 ---
 
-<BaseLayout title={`${deck.title ?? 'Slides'} | wato787`} description={description}>
+<BaseLayout title={`${slide.title ?? 'Slides'} | wato787`} description={description}>
   <Fragment slot="head">
-    <meta property="og:title" content={deck.title} />
+    <meta property="og:title" content={slide.title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="article" />
     <meta property="og:url" content={`/slides/${id}`} />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content={deck.title} />
+    <meta name="twitter:title" content={slide.title} />
     <meta name="twitter:description" content={description} />
   </Fragment>
 
-  <div class="page">
-    <div class="container">
-      <article class="deck">
-        <header class="header">
-          <a href="/slides" class="backLink mono-font">
-            <ArrowLeft size={14} class="backIcon" />
-            Back
-          </a>
-
-          <div class="meta">
-            <span class="date mono-font">{deck.date}</span>
-            <h1 class="title">{deck.title}</h1>
-            {deck.description && <p class="description">{deck.description}</p>}
-          </div>
-        </header>
-
-        <div class="viewerShell">
-          <SlideViewer client:load slides={slideHtmlList} title={deck.title} />
-        </div>
-
-        <div class="footer">
-          <a href="/slides" class="footerLink mono-font">Back to list</a>
-          <span class="footerNote mono-font">End of deck</span>
-        </div>
-      </article>
-    </div>
-  </div>
+  <main class="page">
+    <SlideViewer client:load slides={slideHtmlList} title={slide.title} />
+  </main>
 </BaseLayout>
 
 <style>
   .page {
-    min-height: 100vh;
-    background: var(--color-background);
-  }
-
-  .container {
-    max-width: var(--container-max);
-    margin-inline: auto;
-    padding-inline: 0;
-  }
-
-  @media (min-width: 768px) {
-    .container {
-      padding-inline: 1.5rem;
-    }
-  }
-
-  .deck {
-    padding-block: 3rem;
-  }
-
-  .header {
-    margin-bottom: 3.5rem;
-  }
-
-  .backLink {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 10px;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--color-text-faint);
-    margin-bottom: 3rem;
-    transition: color 0.2s;
-  }
-
-  .backLink:hover {
-    color: var(--color-accent);
-  }
-
-  .backLink:hover .backIcon {
-    transform: translateX(-0.25rem);
-  }
-
-  .backIcon {
-    transition: transform 0.2s;
-  }
-
-  .meta {
-    display: flex;
-    flex-direction: column;
-    gap: 1.5rem;
-  }
-
-  .date {
-    font-size: 0.875rem;
-    font-weight: 700;
-    color: var(--color-accent);
-  }
-
-  .title {
-    font-size: 1.625rem;
-    font-weight: 900;
-    letter-spacing: -0.025em;
-    color: var(--color-text-strong);
-    line-height: 1.35;
-  }
-
-  .description {
-    max-width: 36rem;
-    color: var(--color-text-muted);
-    font-size: 0.9375rem;
-    font-weight: 500;
-    line-height: 1.75;
-  }
-
-  .viewerShell {
-    margin-top: 4rem;
-  }
-
-  @media (min-width: 768px) {
-    .deck {
-      padding-block: 4rem;
-    }
-
-    .header {
-      margin-bottom: 4rem;
-    }
-
-    .title {
-      font-size: 2.5rem;
-      line-height: 1.25;
-    }
-  }
-
-  .footer {
-    margin-top: 10rem;
-    padding-top: 5rem;
-    border-top: 1px solid var(--color-border);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .footerLink {
-    font-size: 10px;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--color-text-faint);
-    transition: color 0.2s;
-  }
-
-  .footerLink:hover {
-    color: var(--color-accent);
-  }
-
-  .footerNote {
-    font-size: 10px;
-    color: var(--color-text-placeholder);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
+    min-height: calc(100vh - 10rem);
+    padding-block: 2rem 5rem;
   }
 </style>

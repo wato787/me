@@ -1,15 +1,15 @@
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useCallback, useEffect, useEffectEvent, useSyncExternalStore } from 'react';
+import { ChevronLeft, ChevronRight, Expand } from 'lucide-react';
+import { useCallback, useRef, useState } from 'react';
 
 interface SlideViewerProps {
   slides: string[];
   title: string;
 }
 
-const HASH_STORE_CHANGE_EVENT = 'slide-viewer:hash-change';
+const getIndexFromHash = (length: number): number => {
+  if (typeof window === 'undefined') return 0;
 
-const getIndexFromHashValue = (hash: string, length: number): number => {
-  const rawHash = hash.replace(/^#/, '');
+  const rawHash = window.location.hash.replace(/^#/, '');
   const normalizedHash = rawHash.replace(/^slide-/, '');
   const parsed = Number.parseInt(normalizedHash, 10);
 
@@ -17,59 +17,27 @@ const getIndexFromHashValue = (hash: string, length: number): number => {
   return Math.min(Math.max(parsed - 1, 0), Math.max(length - 1, 0));
 };
 
-const getIndexFromHash = (length: number): number => {
-  return getIndexFromHashValue(getHashSnapshot(), length);
-};
+const updateHash = (index: number): void => {
+  if (typeof window === 'undefined') return;
 
-const getHashSnapshot = (): string => {
-  if (typeof window === 'undefined') return '';
-  return window.location.hash;
-};
+  const nextHash = `#${index + 1}`;
+  if (window.location.hash === nextHash) return;
 
-const getServerHashSnapshot = (): string => {
-  return '';
-};
-
-const subscribeToHashChange = (onStoreChange: () => void): (() => void) => {
-  window.addEventListener('hashchange', onStoreChange);
-  window.addEventListener('popstate', onStoreChange);
-  window.addEventListener(HASH_STORE_CHANGE_EVENT, onStoreChange);
-  return () => {
-    window.removeEventListener('hashchange', onStoreChange);
-    window.removeEventListener('popstate', onStoreChange);
-    window.removeEventListener(HASH_STORE_CHANGE_EVENT, onStoreChange);
-  };
-};
-
-const notifyHashStoreChange = (): void => {
-  window.dispatchEvent(new Event(HASH_STORE_CHANGE_EVENT));
+  window.history.pushState(null, '', `${window.location.pathname}${window.location.search}${nextHash}`);
 };
 
 const SlideViewer = ({ slides, title }: SlideViewerProps) => {
+  const rootRef = useRef<HTMLElement>(null);
+  const touchStartXRef = useRef<number | null>(null);
+  const [currentIndex, setCurrentIndex] = useState(() => getIndexFromHash(slides.length));
   const lastIndex = Math.max(slides.length - 1, 0);
-  const hash = useSyncExternalStore(subscribeToHashChange, getHashSnapshot, getServerHashSnapshot);
-  const currentIndex = getIndexFromHashValue(hash, slides.length);
-
   const currentSlide = slides[currentIndex] ?? '';
 
   const goTo = useCallback(
-    (nextIndex: number, replace = false) => {
+    (nextIndex: number) => {
       const clampedIndex = Math.min(Math.max(nextIndex, 0), lastIndex);
-
-      if (typeof window === 'undefined') return;
-
-      const nextHash = `#${clampedIndex + 1}`;
-      if (window.location.hash === nextHash) return;
-
-      const nextUrl = `${window.location.pathname}${window.location.search}${nextHash}`;
-      if (replace) {
-        window.history.replaceState(null, '', nextUrl);
-        notifyHashStoreChange();
-        return;
-      }
-
-      window.history.pushState(null, '', nextUrl);
-      notifyHashStoreChange();
+      setCurrentIndex(clampedIndex);
+      updateHash(clampedIndex);
     },
     [lastIndex],
   );
@@ -77,7 +45,7 @@ const SlideViewer = ({ slides, title }: SlideViewerProps) => {
   const goPrevious = useCallback(() => goTo(currentIndex - 1), [currentIndex, goTo]);
   const goNext = useCallback(() => goTo(currentIndex + 1), [currentIndex, goTo]);
 
-  const handleGlobalKeyDown = useEffectEvent((event: KeyboardEvent) => {
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
     if (event.metaKey || event.ctrlKey || event.altKey) return;
     if (event.key === 'ArrowLeft') {
       event.preventDefault();
@@ -88,33 +56,68 @@ const SlideViewer = ({ slides, title }: SlideViewerProps) => {
       event.preventDefault();
       goNext();
     }
-  });
+  };
 
-  useEffect(() => {
-    if (slides.length === 0) return;
+  const handleTouchStart = (event: React.TouchEvent<HTMLElement>) => {
+    touchStartXRef.current = event.touches[0]?.clientX ?? null;
+  };
 
-    goTo(getIndexFromHash(slides.length), true);
-  }, [goTo, hash, slides.length]);
+  const handleTouchEnd = (event: React.TouchEvent<HTMLElement>) => {
+    const startX = touchStartXRef.current;
+    touchStartXRef.current = null;
+    if (startX === null) return;
 
-  useEffect(() => {
-    const handleKeyDown = (event: KeyboardEvent) => {
-      handleGlobalKeyDown(event);
-    };
+    const endX = event.changedTouches[0]?.clientX;
+    if (endX === undefined) return;
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+    const distance = endX - startX;
+    if (Math.abs(distance) < 48) return;
+    if (distance > 0) {
+      goPrevious();
+      return;
+    }
+    goNext();
+  };
+
+  const handleFullscreen = async () => {
+    const element = rootRef.current;
+    if (!element || !document.fullscreenEnabled) return;
+
+    if (document.fullscreenElement) {
+      await document.exitFullscreen();
+      return;
+    }
+
+    await element.requestFullscreen();
+    element.focus();
+  };
 
   if (slides.length === 0) {
     return (
-      <div className="slideViewer" aria-label={`${title} のスライド`}>
+      <section className="slideViewer" aria-label={`${title} のスライド`}>
         <p className="empty">スライド本文がまだありません。</p>
-      </div>
+      </section>
     );
   }
 
   return (
-    <section className="slideViewer" aria-label={`${title} のスライド`}>
+    <section
+      ref={rootRef}
+      className="slideViewer"
+      aria-label={`${title} のスライド`}
+      tabIndex={0}
+      onKeyDown={handleKeyDown}
+      onClick={() => rootRef.current?.focus()}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
+      <div className="viewerTop">
+        <a href="/slides" className="backLink mono-font">
+          Slides
+        </a>
+        <h1 className="deckTitle">{title}</h1>
+      </div>
+
       <div className="slideStage">
         <article
           className="articleBody slideBody"
@@ -148,6 +151,16 @@ const SlideViewer = ({ slides, title }: SlideViewerProps) => {
           title="次のスライド"
         >
           <ChevronRight size={16} aria-hidden="true" />
+        </button>
+
+        <button
+          type="button"
+          className="controlButton"
+          onClick={handleFullscreen}
+          aria-label="全画面表示"
+          title="全画面表示"
+        >
+          <Expand size={16} aria-hidden="true" />
         </button>
       </div>
     </section>
