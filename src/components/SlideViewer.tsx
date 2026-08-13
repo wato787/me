@@ -1,15 +1,15 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useCallback, useEffect, useEffectEvent, useState } from 'react';
+import { useCallback, useEffect, useEffectEvent, useSyncExternalStore } from 'react';
 
 interface SlideViewerProps {
   slides: string[];
   title: string;
 }
 
-function getIndexFromHash(length: number): number {
-  if (typeof window === 'undefined') return 0;
+const HASH_STORE_CHANGE_EVENT = 'slide-viewer:hash-change';
 
-  const rawHash = window.location.hash.replace(/^#/, '');
+function getIndexFromHashValue(hash: string, length: number): number {
+  const rawHash = hash.replace(/^#/, '');
   const normalizedHash = rawHash.replace(/^slide-/, '');
   const parsed = Number.parseInt(normalizedHash, 10);
 
@@ -17,16 +17,44 @@ function getIndexFromHash(length: number): number {
   return Math.min(Math.max(parsed - 1, 0), Math.max(length - 1, 0));
 }
 
+function getIndexFromHash(length: number): number {
+  return getIndexFromHashValue(getHashSnapshot(), length);
+}
+
+function getHashSnapshot(): string {
+  if (typeof window === 'undefined') return '';
+  return window.location.hash;
+}
+
+function getServerHashSnapshot(): string {
+  return '';
+}
+
+function subscribeToHashChange(onStoreChange: () => void): () => void {
+  window.addEventListener('hashchange', onStoreChange);
+  window.addEventListener('popstate', onStoreChange);
+  window.addEventListener(HASH_STORE_CHANGE_EVENT, onStoreChange);
+  return () => {
+    window.removeEventListener('hashchange', onStoreChange);
+    window.removeEventListener('popstate', onStoreChange);
+    window.removeEventListener(HASH_STORE_CHANGE_EVENT, onStoreChange);
+  };
+}
+
+function notifyHashStoreChange(): void {
+  window.dispatchEvent(new Event(HASH_STORE_CHANGE_EVENT));
+}
+
 export default function SlideViewer({ slides, title }: SlideViewerProps) {
   const lastIndex = Math.max(slides.length - 1, 0);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const hash = useSyncExternalStore(subscribeToHashChange, getHashSnapshot, getServerHashSnapshot);
+  const currentIndex = getIndexFromHashValue(hash, slides.length);
 
   const currentSlide = slides[currentIndex] ?? '';
 
   const goTo = useCallback(
     (nextIndex: number, replace = false) => {
       const clampedIndex = Math.min(Math.max(nextIndex, 0), lastIndex);
-      setCurrentIndex(clampedIndex);
 
       if (typeof window === 'undefined') return;
 
@@ -36,20 +64,18 @@ export default function SlideViewer({ slides, title }: SlideViewerProps) {
       const nextUrl = `${window.location.pathname}${window.location.search}${nextHash}`;
       if (replace) {
         window.history.replaceState(null, '', nextUrl);
+        notifyHashStoreChange();
         return;
       }
 
       window.history.pushState(null, '', nextUrl);
+      notifyHashStoreChange();
     },
     [lastIndex],
   );
 
   const goPrevious = useCallback(() => goTo(currentIndex - 1), [currentIndex, goTo]);
   const goNext = useCallback(() => goTo(currentIndex + 1), [currentIndex, goTo]);
-
-  const syncIndexFromUrl = useEffectEvent(() => {
-    setCurrentIndex(getIndexFromHash(slides.length));
-  });
 
   const handleGlobalKeyDown = useEffectEvent((event: KeyboardEvent) => {
     if (event.metaKey || event.ctrlKey || event.altKey) return;
@@ -68,14 +94,7 @@ export default function SlideViewer({ slides, title }: SlideViewerProps) {
     if (slides.length === 0) return;
 
     goTo(getIndexFromHash(slides.length), true);
-
-    window.addEventListener('hashchange', syncIndexFromUrl);
-    window.addEventListener('popstate', syncIndexFromUrl);
-    return () => {
-      window.removeEventListener('hashchange', syncIndexFromUrl);
-      window.removeEventListener('popstate', syncIndexFromUrl);
-    };
-  }, [goTo, slides.length]);
+  }, [goTo, hash, slides.length]);
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
