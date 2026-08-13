@@ -80,7 +80,6 @@ export async function getBlogById(id: string): Promise<Blog> {
 export interface Slide {
   id: string;
   title: string;
-  description?: string;
   content?: string;
   createdAt: string;
   updatedAt: string;
