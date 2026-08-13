@@ -8,29 +8,29 @@ interface SlideViewerProps {
 
 const HASH_STORE_CHANGE_EVENT = 'slide-viewer:hash-change';
 
-function getIndexFromHashValue(hash: string, length: number): number {
+const getIndexFromHashValue = (hash: string, length: number): number => {
   const rawHash = hash.replace(/^#/, '');
   const normalizedHash = rawHash.replace(/^slide-/, '');
   const parsed = Number.parseInt(normalizedHash, 10);
 
   if (!Number.isFinite(parsed)) return 0;
   return Math.min(Math.max(parsed - 1, 0), Math.max(length - 1, 0));
-}
+};
 
-function getIndexFromHash(length: number): number {
+const getIndexFromHash = (length: number): number => {
   return getIndexFromHashValue(getHashSnapshot(), length);
-}
+};
 
-function getHashSnapshot(): string {
+const getHashSnapshot = (): string => {
   if (typeof window === 'undefined') return '';
   return window.location.hash;
-}
+};
 
-function getServerHashSnapshot(): string {
+const getServerHashSnapshot = (): string => {
   return '';
-}
+};
 
-function subscribeToHashChange(onStoreChange: () => void): () => void {
+const subscribeToHashChange = (onStoreChange: () => void): (() => void) => {
   window.addEventListener('hashchange', onStoreChange);
   window.addEventListener('popstate', onStoreChange);
   window.addEventListener(HASH_STORE_CHANGE_EVENT, onStoreChange);
@@ -39,13 +39,13 @@ function subscribeToHashChange(onStoreChange: () => void): () => void {
     window.removeEventListener('popstate', onStoreChange);
     window.removeEventListener(HASH_STORE_CHANGE_EVENT, onStoreChange);
   };
-}
+};
 
-function notifyHashStoreChange(): void {
+const notifyHashStoreChange = (): void => {
   window.dispatchEvent(new Event(HASH_STORE_CHANGE_EVENT));
-}
+};
 
-export default function SlideViewer({ slides, title }: SlideViewerProps) {
+const SlideViewer = ({ slides, title }: SlideViewerProps) => {
   const lastIndex = Math.max(slides.length - 1, 0);
   const hash = useSyncExternalStore(subscribeToHashChange, getHashSnapshot, getServerHashSnapshot);
   const currentIndex = getIndexFromHashValue(hash, slides.length);
@@ -152,4 +152,6 @@ export default function SlideViewer({ slides, title }: SlideViewerProps) {
       </div>
     </section>
   );
-}
+};
+
+export default SlideViewer;
