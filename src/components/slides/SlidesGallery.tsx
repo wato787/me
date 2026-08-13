@@ -1,22 +1,17 @@
 import { useMemo, useState } from 'react';
-import { flushSync } from 'react-dom';
-import SlideViewer, { type SlideDeck } from './SlideViewer';
-
-export interface SlideCardDeck {
-  id: string;
-  title: string;
-  date: string;
-}
+import SlideViewer from './SlideViewer';
+import { loadSlideDeck } from './loadSlideDeck';
+import type { SlideCardDeck, SlideDeck } from './types';
 
 interface SlidesGalleryProps {
   decks: SlideCardDeck[];
 }
 
-interface SlideDeckResponse {
-  id: string;
-  title: string;
-  slides: string[];
-}
+const handleViewerReady = (overlay: HTMLElement) => {
+  overlay.focus();
+  if (!document.fullscreenEnabled || document.fullscreenElement) return;
+  void overlay.requestFullscreen().catch(() => undefined);
+};
 
 const SlidesGallery = ({ decks }: SlidesGalleryProps) => {
   const [activeDeckId, setActiveDeckId] = useState<string | null>(null);
@@ -32,43 +27,25 @@ const SlidesGallery = ({ decks }: SlidesGalleryProps) => {
   const openDeck = async (deckId: string) => {
     const cachedDeck = loadedDecks[deckId];
     if (cachedDeck) {
-      flushSync(() => {
-        setActiveDeckId(deckId);
-      });
+      setActiveDeckId(deckId);
       return;
     }
+
+    const deckMeta = deckById[deckId];
+    if (!deckMeta) return;
 
     setLoadingDeckId(deckId);
     setErrorDeckId(null);
 
     try {
-      const response = await fetch(`/slides/data/${deckId}.json`);
-      if (!response.ok) throw new Error(`Failed to load slide deck: ${response.status}`);
-
-      const data = (await response.json()) as SlideDeckResponse;
-      const deckMeta = deckById[deckId];
-      const nextDeck = {
-        id: data.id,
-        title: data.title,
-        date: deckMeta?.date ?? '',
-        slides: data.slides,
-      };
-
-      flushSync(() => {
-        setLoadedDecks((current) => ({ ...current, [deckId]: nextDeck }));
-        setActiveDeckId(deckId);
-      });
+      const nextDeck = await loadSlideDeck(deckMeta);
+      setLoadedDecks((current) => ({ ...current, [deckId]: nextDeck }));
+      setActiveDeckId(deckId);
     } catch {
       setErrorDeckId(deckId);
     } finally {
       setLoadingDeckId(null);
     }
-  };
-
-  const handleViewerReady = (overlay: HTMLElement) => {
-    overlay.focus();
-    if (!document.fullscreenEnabled || document.fullscreenElement) return;
-    void overlay.requestFullscreen().catch(() => undefined);
   };
 
   return (

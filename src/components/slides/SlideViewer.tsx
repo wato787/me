@@ -1,11 +1,6 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-
-export interface SlideDeck {
-  id: string;
-  title: string;
-  date: string;
-  slides: string[];
-}
+import DOMPurify from 'dompurify';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import type { SlideDeck } from './types';
 
 interface SlideViewerProps {
   deck: SlideDeck;
@@ -33,12 +28,18 @@ const updateHash = (index: number): void => {
   window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}${nextHash}`);
 };
 
+const sanitizeSlideHtml = (html: string): string => {
+  return DOMPurify.sanitize(html, {
+    ADD_ATTR: ['target'],
+  });
+};
+
 const SlideViewer = ({ deck, onClose, onReady }: SlideViewerProps) => {
   const overlayRef = useRef<HTMLElement>(null);
   const touchStartXRef = useRef<number | null>(null);
   const [currentIndex, setCurrentIndex] = useState(() => getIndexFromHash(deck.slides.length));
   const lastIndex = Math.max(deck.slides.length - 1, 0);
-  const currentSlide = deck.slides[currentIndex] ?? '';
+  const currentSlide = useMemo(() => sanitizeSlideHtml(deck.slides[currentIndex] ?? ''), [currentIndex, deck.slides]);
 
   const goTo = useCallback(
     (nextIndex: number) => {

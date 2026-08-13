@@ -18,5 +18,14 @@ export function splitSlideHtml(html: string): string[] {
 }
 
 export function renderSlideHtml(html: string): string[] {
-  return splitSlideHtml(html).map(renderArticleHtml).filter((chunk) => !isEmptySlideHtml(chunk));
+  const slides: string[] = [];
+
+  for (const chunk of splitSlideHtml(html)) {
+    const rendered = renderArticleHtml(chunk);
+    if (!isEmptySlideHtml(rendered)) {
+      slides.push(rendered);
+    }
+  }
+
+  return slides;
 }
