@@ -145,6 +145,7 @@ const SlideViewer = ({ deck, onClose, onReady }: SlideViewerProps) => {
         <article
           className="articleBody slideBody"
           aria-label={`${currentIndex + 1}枚目のスライド`}
+          data-slide-number={String(currentIndex + 1).padStart(2, '0')}
           dangerouslySetInnerHTML={{ __html: currentSlide }}
         />
       </div>
