@@ -1,10 +1,12 @@
 ---
 import { ArrowLeft } from 'lucide-astro';
+import SlideViewer from '../../components/SlideViewer';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { formatDateYmd } from '../../lib/date';
 import { getSlideById, getSlides, type Slide } from '../../lib/microcms';
 import { renderSlideHtml } from '../../lib/slideHtml';
 import '../../styles/article.css';
+import '../../styles/slideViewer.css';
 
 export async function getStaticPaths() {
   const slides = await getSlides();
@@ -56,23 +58,8 @@ const description = deck.description ?? 'wato787のスライドです。';
           </div>
         </header>
 
-        <div class="viewerShell" aria-label={`${deck.title} のスライド`}>
-          {
-            slideHtmlList.length > 0 ? (
-              <ol class="slideList">
-                {slideHtmlList.map((slideHtml, index) => (
-                  <li class="slideFrame" id={`slide-${index + 1}`}>
-                    <div class="slideCounter mono-font">
-                      {index + 1} / {slideHtmlList.length}
-                    </div>
-                    <div class="articleBody slideBody" set:html={slideHtml}></div>
-                  </li>
-                ))}
-              </ol>
-            ) : (
-              <p class="empty">スライド本文がまだありません。</p>
-            )
-          }
+        <div class="viewerShell">
+          <SlideViewer client:load slides={slideHtmlList} title={deck.title} />
         </div>
 
         <div class="footer">
@@ -165,56 +152,6 @@ const description = deck.description ?? 'wato787のスライドです。';
 
   .viewerShell {
     margin-top: 4rem;
-  }
-
-  .slideList {
-    display: flex;
-    flex-direction: column;
-    gap: 3rem;
-    padding: 0;
-    margin: 0;
-    list-style: none;
-  }
-
-  .slideFrame {
-    position: relative;
-    display: flex;
-    aspect-ratio: 16 / 9;
-    min-height: 0;
-    overflow: auto;
-    padding: clamp(1.25rem, 4vw, 3rem);
-    border: 1px solid var(--color-border);
-    background: #fff;
-  }
-
-  .slideCounter {
-    position: absolute;
-    right: 1rem;
-    bottom: 0.75rem;
-    color: var(--color-text-placeholder);
-    font-size: 10px;
-    font-weight: 900;
-    letter-spacing: 0.1em;
-  }
-
-  .slideBody {
-    width: 100%;
-    max-width: none;
-    margin: auto 0;
-    font-size: clamp(0.75rem, 1.7vw, 1.125rem);
-    line-height: 1.65;
-  }
-
-  .slideBody :global(h1:first-child),
-  .slideBody :global(h2:first-child),
-  .slideBody :global(h3:first-child) {
-    margin-top: 0;
-  }
-
-  .empty {
-    color: var(--color-text-muted);
-    font-size: 0.9375rem;
-    line-height: 1.75;
   }
 
   @media (min-width: 768px) {
