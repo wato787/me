@@ -77,6 +77,34 @@ export async function getBlogById(id: string): Promise<Blog> {
   });
 }
 
+export interface Slide {
+  id: string;
+  title: string;
+  description?: string;
+  content?: string;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt?: string;
+}
+
+export async function getSlides(): Promise<Slide[]> {
+  const data = await client.getList<Slide>({
+    endpoint: 'slides',
+    queries: {
+      orders: '-createdAt',
+    },
+  });
+  return data.contents;
+}
+
+export async function getSlideById(id: string): Promise<Slide> {
+  return client.get<Slide>({
+    endpoint: 'slides',
+    contentId: id,
+    queries: { richEditorFormat: 'html' },
+  });
+}
+
 export interface Skill {
   id: string;
   name: string;
