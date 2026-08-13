@@ -7,7 +7,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "check": "astro check",
-    "lint:react": "eslint \"src/**/*.{ts,tsx}\" --ignore-pattern \"src/**/*.d.ts\"",
+    "lint:react": "oxlint --react-plugin --react-perf-plugin src/components/SlideViewer.tsx",
     "deploy": "bun run build && wrangler deploy"
   },
   "dependencies": {
@@ -23,10 +23,8 @@
   },
   "devDependencies": {
     "@types/node": "^26.1.1",
-    "eslint": "^10.8.1",
-    "eslint-plugin-react-hooks": "^7.1.1",
+    "oxlint": "^1.78.0",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.67.0",
     "wrangler": "^4.114.0"
   },
   "ignoreScripts": [
