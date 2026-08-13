@@ -1,0 +1,263 @@
+---
+import { ArrowLeft } from 'lucide-astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { formatDateYmd } from '../../lib/date';
+import { getSlideById, getSlides, type Slide } from '../../lib/microcms';
+import { renderSlideHtml } from '../../lib/slideHtml';
+import '../../styles/article.css';
+
+export async function getStaticPaths() {
+  const slides = await getSlides();
+  return slides.map((slide) => ({
+    params: { id: slide.id },
+    props: { slide },
+  }));
+}
+
+const { id } = Astro.params;
+let { slide } = Astro.props as { slide: Slide };
+
+if (!slide.content) {
+  slide = await getSlideById(id as string);
+}
+
+const deck = {
+  ...slide,
+  date: formatDateYmd(slide.createdAt),
+};
+const slideHtmlList = renderSlideHtml(deck.content || '');
+const description = deck.description ?? 'wato787のスライドです。';
+---
+
+<BaseLayout title={`${deck.title ?? 'Slides'} | wato787`} description={description}>
+  <Fragment slot="head">
+    <meta property="og:title" content={deck.title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content={`/slides/${id}`} />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={deck.title} />
+    <meta name="twitter:description" content={description} />
+  </Fragment>
+
+  <div class="page">
+    <div class="container">
+      <article class="deck">
+        <header class="header">
+          <a href="/slides" class="backLink mono-font">
+            <ArrowLeft size={14} class="backIcon" />
+            Back
+          </a>
+
+          <div class="meta">
+            <span class="date mono-font">{deck.date}</span>
+            <h1 class="title">{deck.title}</h1>
+            {deck.description && <p class="description">{deck.description}</p>}
+          </div>
+        </header>
+
+        <div class="viewerShell" aria-label={`${deck.title} のスライド`}>
+          {
+            slideHtmlList.length > 0 ? (
+              <ol class="slideList">
+                {slideHtmlList.map((slideHtml, index) => (
+                  <li class="slideFrame" id={`slide-${index + 1}`}>
+                    <div class="slideCounter mono-font">
+                      {index + 1} / {slideHtmlList.length}
+                    </div>
+                    <div class="articleBody slideBody" set:html={slideHtml}></div>
+                  </li>
+                ))}
+              </ol>
+            ) : (
+              <p class="empty">スライド本文がまだありません。</p>
+            )
+          }
+        </div>
+
+        <div class="footer">
+          <a href="/slides" class="footerLink mono-font">Back to list</a>
+          <span class="footerNote mono-font">End of deck</span>
+        </div>
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page {
+    min-height: 100vh;
+    background: var(--color-background);
+  }
+
+  .container {
+    max-width: var(--container-max);
+    margin-inline: auto;
+    padding-inline: 0;
+  }
+
+  @media (min-width: 768px) {
+    .container {
+      padding-inline: 1.5rem;
+    }
+  }
+
+  .deck {
+    padding-block: 3rem;
+  }
+
+  .header {
+    margin-bottom: 3.5rem;
+  }
+
+  .backLink {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 10px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-text-faint);
+    margin-bottom: 3rem;
+    transition: color 0.2s;
+  }
+
+  .backLink:hover {
+    color: var(--color-accent);
+  }
+
+  .backLink:hover .backIcon {
+    transform: translateX(-0.25rem);
+  }
+
+  .backIcon {
+    transition: transform 0.2s;
+  }
+
+  .meta {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .date {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--color-accent);
+  }
+
+  .title {
+    font-size: 1.625rem;
+    font-weight: 900;
+    letter-spacing: -0.025em;
+    color: var(--color-text-strong);
+    line-height: 1.35;
+  }
+
+  .description {
+    max-width: 36rem;
+    color: var(--color-text-muted);
+    font-size: 0.9375rem;
+    font-weight: 500;
+    line-height: 1.75;
+  }
+
+  .viewerShell {
+    margin-top: 4rem;
+  }
+
+  .slideList {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+  }
+
+  .slideFrame {
+    position: relative;
+    display: flex;
+    aspect-ratio: 16 / 9;
+    min-height: 0;
+    overflow: auto;
+    padding: clamp(1.25rem, 4vw, 3rem);
+    border: 1px solid var(--color-border);
+    background: #fff;
+  }
+
+  .slideCounter {
+    position: absolute;
+    right: 1rem;
+    bottom: 0.75rem;
+    color: var(--color-text-placeholder);
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.1em;
+  }
+
+  .slideBody {
+    width: 100%;
+    max-width: none;
+    margin: auto 0;
+    font-size: clamp(0.75rem, 1.7vw, 1.125rem);
+    line-height: 1.65;
+  }
+
+  .slideBody :global(h1:first-child),
+  .slideBody :global(h2:first-child),
+  .slideBody :global(h3:first-child) {
+    margin-top: 0;
+  }
+
+  .empty {
+    color: var(--color-text-muted);
+    font-size: 0.9375rem;
+    line-height: 1.75;
+  }
+
+  @media (min-width: 768px) {
+    .deck {
+      padding-block: 4rem;
+    }
+
+    .header {
+      margin-bottom: 4rem;
+    }
+
+    .title {
+      font-size: 2.5rem;
+      line-height: 1.25;
+    }
+  }
+
+  .footer {
+    margin-top: 10rem;
+    padding-top: 5rem;
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footerLink {
+    font-size: 10px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--color-text-faint);
+    transition: color 0.2s;
+  }
+
+  .footerLink:hover {
+    color: var(--color-accent);
+  }
+
+  .footerNote {
+    font-size: 10px;
+    color: var(--color-text-placeholder);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+</style>
