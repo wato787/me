@@ -4,8 +4,8 @@ import type { SlideDeck } from './types';
 
 interface SlideViewerProps {
   deck: SlideDeck;
-  onClose: () => void;
-  onReady: (overlay: HTMLElement) => void;
+  closeHref: string;
+  readHref: string;
 }
 
 const getIndexFromHash = (length: number): number => {
@@ -34,10 +34,11 @@ const sanitizeSlideHtml = (html: string): string => {
   });
 };
 
-const SlideViewer = ({ deck, onClose, onReady }: SlideViewerProps) => {
+const SlideViewer = ({ deck, closeHref, readHref }: SlideViewerProps) => {
   const overlayRef = useRef<HTMLElement>(null);
   const touchStartXRef = useRef<number | null>(null);
   const [currentIndex, setCurrentIndex] = useState(() => getIndexFromHash(deck.slides.length));
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const lastIndex = Math.max(deck.slides.length - 1, 0);
   const currentSlide = useMemo(() => sanitizeSlideHtml(deck.slides[currentIndex] ?? ''), [currentIndex, deck.slides]);
 
@@ -57,8 +58,18 @@ const SlideViewer = ({ deck, onClose, onReady }: SlideViewerProps) => {
     if (document.fullscreenElement) {
       await document.exitFullscreen();
     }
-    onClose();
-  }, [onClose]);
+    window.location.assign(closeHref);
+  }, [closeHref]);
+
+  const toggleFullscreen = () => {
+    const overlay = overlayRef.current;
+    if (document.fullscreenElement) {
+      void document.exitFullscreen();
+      return;
+    }
+    if (!overlay || !document.fullscreenEnabled) return;
+    void overlay.requestFullscreen().catch(() => undefined);
+  };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
     if (event.metaKey || event.ctrlKey || event.altKey) return;
@@ -104,31 +115,17 @@ const SlideViewer = ({ deck, onClose, onReady }: SlideViewerProps) => {
     if (!overlay) return;
 
     overlay.focus();
-    onReady(overlay);
-  }, [onReady]);
+  }, []);
 
   useEffect(() => {
     updateHash(currentIndex);
   }, [currentIndex]);
 
   useEffect(() => {
-    const handleFullscreenChange = () => {
-      if (!document.fullscreenElement) {
-        onClose();
-      }
-    };
-
+    const handleFullscreenChange = () => setIsFullscreen(Boolean(document.fullscreenElement));
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     return () => document.removeEventListener('fullscreenchange', handleFullscreenChange);
-  }, [onClose]);
-
-  if (deck.slides.length === 0) {
-    return (
-      <section className="slideOverlay" aria-label={`${deck.title} のスライド`}>
-        <p className="empty">スライド本文がまだありません。</p>
-      </section>
-    );
-  }
+  }, []);
 
   return (
     <section
@@ -141,16 +138,29 @@ const SlideViewer = ({ deck, onClose, onReady }: SlideViewerProps) => {
       onTouchEnd={handleTouchEnd}
     >
       <button type="button" className="overlayBackdrop" aria-label="スライドを閉じる" onClick={() => void close()} />
-      <div className="slideStage">
-        <article
-          className="articleBody slideBody"
-          aria-label={`${currentIndex + 1}枚目のスライド`}
-          dangerouslySetInnerHTML={{ __html: currentSlide }}
-        />
-      </div>
-      <div className="slideProgress mono-font" aria-live="polite">
-        {currentIndex + 1} / {deck.slides.length}
-      </div>
+      <nav className="slideControls mono-font" aria-label="スライド操作">
+        <a className="slideControl" href={readHref}>Read</a>
+        <button type="button" className="slideControl" onClick={toggleFullscreen}>
+          {isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
+        </button>
+        <button type="button" className="slideControl" onClick={() => void close()}>Close</button>
+      </nav>
+      {deck.slides.length > 0 ? (
+        <>
+          <div className="slideStage">
+            <article
+              className="articleBody slideBody"
+              aria-label={`${currentIndex + 1}枚目のスライド`}
+              dangerouslySetInnerHTML={{ __html: currentSlide }}
+            />
+          </div>
+          <div className="slideProgress mono-font" aria-live="polite">
+            {currentIndex + 1} / {deck.slides.length}
+          </div>
+        </>
+      ) : (
+        <p className="empty">スライド本文がまだありません。</p>
+      )}
     </section>
   );
 };

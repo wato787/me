@@ -12,7 +12,7 @@ export function splitSlideHtml(html: string): string[] {
   if (!html) return [];
 
   return html
-    .split(/<hr\b[^>]*>/i)
+    .split(/<hr\b[^>]*>/gi)
     .map((chunk) => chunk.trim())
     .filter((chunk) => !isEmptySlideHtml(chunk));
 }

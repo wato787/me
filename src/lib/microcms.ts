@@ -87,14 +87,25 @@ export interface Slide {
 }
 
 export async function getSlides(): Promise<Slide[]> {
-  const data = await client.getList<Slide>({
-    endpoint: 'slides',
-    queries: {
-      orders: '-createdAt',
-      fields: 'id,title,createdAt,updatedAt,publishedAt',
-    },
-  });
-  return data.contents;
+  const limit = 100;
+  const slides: Slide[] = [];
+
+  while (true) {
+    const data = await client.getList<Slide>({
+      endpoint: 'slides',
+      queries: {
+        orders: '-createdAt',
+        fields: 'id,title,createdAt,updatedAt,publishedAt',
+        limit,
+        offset: slides.length,
+      },
+    });
+
+    slides.push(...data.contents);
+    if (slides.length >= data.totalCount || data.contents.length === 0) break;
+  }
+
+  return slides;
 }
 
 export async function getSlideById(id: string): Promise<Slide> {
