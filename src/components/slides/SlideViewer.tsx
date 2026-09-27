@@ -20,10 +20,6 @@ const SlideViewer = ({ deck, closeHref, readHref }: SlideViewerProps) => {
     window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}#${index + 1}`);
   };
 
-  const close = () => {
-    window.location.assign(closeHref);
-  };
-
   useEffect(() => {
     const syncHash = () => setCurrentIndex(getIndexFromHash(deck.slides.length));
     viewerRef.current?.focus();
@@ -36,10 +32,7 @@ const SlideViewer = ({ deck, closeHref, readHref }: SlideViewerProps) => {
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
     if (event.metaKey || event.ctrlKey || event.altKey) return;
-    if (event.key === 'Escape') {
-      event.preventDefault();
-      close();
-    } else if (event.key === 'ArrowLeft') {
+    if (event.key === 'ArrowLeft') {
       event.preventDefault(); goTo(currentIndex - 1);
     } else if (event.key === 'ArrowRight' || event.key === ' ') {
       event.preventDefault(); goTo(currentIndex + 1);
