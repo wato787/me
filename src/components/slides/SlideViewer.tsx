@@ -12,8 +12,6 @@ const SlideViewer = ({ deck, closeHref, readHref }: SlideViewerProps) => {
   const viewerRef = useRef<HTMLElement>(null);
   const touchStartXRef = useRef<number | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isFullscreen, setIsFullscreen] = useState(false);
-  const [canFullscreen, setCanFullscreen] = useState(true);
   const lastIndex = Math.max(deck.slides.length - 1, 0);
 
   const goTo = (nextIndex: number) => {
@@ -22,42 +20,25 @@ const SlideViewer = ({ deck, closeHref, readHref }: SlideViewerProps) => {
     window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}#${index + 1}`);
   };
 
-  const close = async () => {
-    if (document.fullscreenElement) await document.exitFullscreen();
+  const close = () => {
     window.location.assign(closeHref);
-  };
-
-  const toggleFullscreen = async () => {
-    const viewer = viewerRef.current;
-    if (!viewer || !document.fullscreenEnabled) return;
-    try {
-      if (document.fullscreenElement) await document.exitFullscreen();
-      else await viewer.requestFullscreen();
-    } catch {
-      setCanFullscreen(false);
-    }
   };
 
   useEffect(() => {
     const syncHash = () => setCurrentIndex(getIndexFromHash(deck.slides.length));
-    const syncFullscreen = () => setIsFullscreen(document.fullscreenElement === viewerRef.current);
-    setCanFullscreen(document.fullscreenEnabled);
     viewerRef.current?.focus();
     syncHash();
     window.addEventListener('hashchange', syncHash);
-    document.addEventListener('fullscreenchange', syncFullscreen);
     return () => {
       window.removeEventListener('hashchange', syncHash);
-      document.removeEventListener('fullscreenchange', syncFullscreen);
     };
   }, [deck.slides.length]);
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLElement>) => {
     if (event.metaKey || event.ctrlKey || event.altKey) return;
     if (event.key === 'Escape') {
-      if (document.fullscreenElement) return;
       event.preventDefault();
-      void close();
+      close();
     } else if (event.key === 'ArrowLeft') {
       event.preventDefault(); goTo(currentIndex - 1);
     } else if (event.key === 'ArrowRight' || event.key === ' ') {
@@ -81,7 +62,6 @@ const SlideViewer = ({ deck, closeHref, readHref }: SlideViewerProps) => {
         <p className="viewerTitle">{deck.title}</p>
         <nav className="viewerActions mono-font" aria-label="資料表示">
           <a className="viewerLink" href={readHref}>Read</a>
-          <button type="button" className="viewerLink" onClick={() => void toggleFullscreen()} disabled={!canFullscreen}>{isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}</button>
         </nav>
       </header>
       <div className="slideViewport">
