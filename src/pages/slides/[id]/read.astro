@@ -1,9 +1,9 @@
 ---
 import { ArrowLeft } from 'lucide-astro';
 import BaseLayout from '../../../layouts/BaseLayout.astro';
-import { renderArticleHtml } from '../../../lib/articleHtml';
 import { formatDateYmd } from '../../../lib/date';
 import { getSlideById, getSlides, type Slide } from '../../../lib/microcms';
+import { renderSlideHtml } from '../../../lib/slideHtml';
 import '../../../styles/article.css';
 
 export async function getStaticPaths() {
@@ -21,7 +21,7 @@ if (!slide.content) {
   slide = await getSlideById(id as string);
 }
 
-const articleHtml = renderArticleHtml(slide.content || '');
+const sections = renderSlideHtml(slide.content || '');
 const description = slide.content ? `${slide.content.replace(/<[^>]*>/g, '').slice(0, 160)}...` : undefined;
 ---
 
@@ -47,7 +47,9 @@ const description = slide.content ? `${slide.content.replace(/<[^>]*>/g, '').sli
           </div>
         </header>
 
-        <div class="articleBody" set:html={articleHtml}></div>
+        <div class="readingSections">
+          {sections.map((section, index) => <section class="readingSection" aria-label={`Section ${index + 1}`}><div class="sectionNumber mono-font">{String(index + 1).padStart(2, '0')}</div><div class="articleBody" set:html={section}></div></section>)}
+        </div>
 
         <div class="footer">
           <a href={`/slides/${slide.id}`} class="footerLink mono-font">View slides</a>
@@ -68,7 +70,11 @@ const description = slide.content ? `${slide.content.replace(/<[^>]*>/g, '').sli
   .meta { display: flex; flex-direction: column; gap: 1.5rem; }
   .date { color: var(--color-accent); font-size: 0.875rem; font-weight: 700; }
   .title { color: var(--color-text-strong); font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 900; letter-spacing: -0.04em; line-height: 1; }
+  .readingSections { display: grid; gap: 5rem; }
+  .readingSection { display: grid; grid-template-columns: 2rem minmax(0, 1fr); gap: 1rem; padding-top: 1.5rem; border-top: 1px solid var(--color-border); }
+  .sectionNumber { padding-top: 0.35rem; color: var(--color-text-faint); font-size: 10px; font-weight: 700; }
+  .readingSection :global(.articleBody) { max-width: 42rem; }
   .footer { display: flex; justify-content: space-between; gap: 1rem; margin-top: 5rem; padding-top: 1.5rem; border-top: 1px solid var(--color-border); }
   .footerLink { color: var(--color-text-muted); font-size: 10px; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; }
-  @media (min-width: 768px) { .container { padding-inline: 1.5rem; } }
+  @media (min-width: 768px) { .container { padding-inline: 1.5rem; } .readingSection { grid-template-columns: 3rem minmax(0, 1fr); gap: 2rem; } }
 </style>

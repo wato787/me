@@ -31,7 +31,7 @@ const deck: SlideDeck = {
 };
 ---
 
-<BaseLayout title={`${slide.title} | Slides | wato787`} description={`${slide.title}のスライドです。`}>
+<BaseLayout title={`${slide.title} | Slides | wato787`} description={`${slide.title}のスライドです。`} immersive>
   <Fragment slot="head">
     <meta property="og:title" content={slide.title} />
     <meta property="og:description" content={`${slide.title}のスライドです。`} />
@@ -39,5 +39,5 @@ const deck: SlideDeck = {
     <meta property="og:url" content={`/slides/${slide.id}`} />
   </Fragment>
 
-  <SlideViewer client:only="react" deck={deck} closeHref="/slides" readHref={`/slides/${slide.id}/read`} />
+  <SlideViewer client:load deck={deck} closeHref="/slides" readHref={`/slides/${slide.id}/read`} />
 </BaseLayout>
