@@ -1,0 +1,74 @@
+---
+import { ArrowLeft } from 'lucide-astro';
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import { renderArticleHtml } from '../../../lib/articleHtml';
+import { formatDateYmd } from '../../../lib/date';
+import { getSlideById, getSlides, type Slide } from '../../../lib/microcms';
+import '../../../styles/article.css';
+
+export async function getStaticPaths() {
+  const slides = await getSlides();
+  return slides.map((slide) => ({
+    params: { id: slide.id },
+    props: { slide },
+  }));
+}
+
+const { id } = Astro.params;
+let { slide } = Astro.props as { slide: Slide };
+
+if (!slide.content) {
+  slide = await getSlideById(id as string);
+}
+
+const articleHtml = renderArticleHtml(slide.content || '');
+const description = slide.content ? `${slide.content.replace(/<[^>]*>/g, '').slice(0, 160)}...` : undefined;
+---
+
+<BaseLayout title={`${slide.title} | Slides | wato787`} description={description ?? `${slide.title}の読み物です。`}>
+  <Fragment slot="head">
+    <meta property="og:title" content={slide.title} />
+    <meta property="og:description" content={description ?? `${slide.title}の読み物です。`} />
+    <meta property="og:type" content="article" />
+    <meta property="og:url" content={`/slides/${slide.id}/read`} />
+  </Fragment>
+
+  <div class="page">
+    <div class="container">
+      <article class="article">
+        <header class="header">
+          <a href={`/slides/${slide.id}`} class="backLink mono-font">
+            <ArrowLeft size={14} class="backIcon" />
+            View slides
+          </a>
+          <div class="meta">
+            <span class="date mono-font">{formatDateYmd(slide.createdAt)}</span>
+            <h1 class="title">{slide.title}</h1>
+          </div>
+        </header>
+
+        <div class="articleBody" set:html={articleHtml}></div>
+
+        <div class="footer">
+          <a href={`/slides/${slide.id}`} class="footerLink mono-font">View slides</a>
+          <a href="/slides" class="footerLink mono-font">Back to list</a>
+        </div>
+      </article>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .page { min-height: 100vh; background: var(--color-background); }
+  .container { max-width: var(--container-max); margin-inline: auto; padding-inline: 0; }
+  .article { padding-block: 3rem; }
+  .header { margin-bottom: 3.5rem; }
+  .backLink { display: inline-flex; align-items: center; gap: 0.5rem; margin-bottom: 3rem; color: var(--color-text-faint); font-size: 10px; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; }
+  .backLink:hover { color: var(--color-accent); }
+  .meta { display: flex; flex-direction: column; gap: 1.5rem; }
+  .date { color: var(--color-accent); font-size: 0.875rem; font-weight: 700; }
+  .title { color: var(--color-text-strong); font-size: clamp(2.5rem, 8vw, 5rem); font-weight: 900; letter-spacing: -0.04em; line-height: 1; }
+  .footer { display: flex; justify-content: space-between; gap: 1rem; margin-top: 5rem; padding-top: 1.5rem; border-top: 1px solid var(--color-border); }
+  .footerLink { color: var(--color-text-muted); font-size: 10px; font-weight: 900; letter-spacing: 0.1em; text-transform: uppercase; }
+  @media (min-width: 768px) { .container { padding-inline: 1.5rem; } }
+</style>

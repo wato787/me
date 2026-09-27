@@ -29,6 +29,7 @@
     linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
   color: var(--color-text-strong);
   text-align: left;
+  text-decoration: none;
   cursor: pointer;
   transition:
     border-color 0.2s,
@@ -40,11 +41,6 @@
   border-color: var(--color-accent);
   transform: translateY(-0.25rem);
   box-shadow: 0 1.5rem 3rem rgba(24, 24, 27, 0.08);
-}
-
-.slideCard:disabled {
-  cursor: wait;
-  opacity: 0.72;
 }
 
 .cardMeta,
@@ -89,6 +85,36 @@
   border: 0;
   background: transparent;
   cursor: default;
+}
+
+.slideControls {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 3;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.slideControl {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.45);
+  color: rgba(255, 255, 255, 0.82);
+  font: inherit;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.slideControl:hover,
+.slideControl:focus-visible {
+  border-color: rgba(255, 255, 255, 0.7);
+  color: #fff;
 }
 
 .slideStage {

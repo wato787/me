@@ -7,9 +7,3 @@ export interface SlideCardDeck {
 export interface SlideDeck extends SlideCardDeck {
   slides: string[];
 }
-
-export interface SlideDeckResponse {
-  id: string;
-  title: string;
-  slides: string[];
-}

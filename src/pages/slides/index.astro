@@ -44,7 +44,7 @@ const groupedDecks = groupDecksByYear(decks);
                 <div class="yearLine"></div>
               </div>
 
-              <SlidesGallery client:load decks={yearDecks.map(({ year: _year, ...deck }) => deck)} />
+              <SlidesGallery decks={yearDecks.map(({ year: _year, ...deck }) => deck)} />
             </section>
           ))
       }
