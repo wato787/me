@@ -39,5 +39,5 @@ const deck: SlideDeck = {
     <meta property="og:url" content={`/slides/${slide.id}`} />
   </Fragment>
 
-  <SlideViewer client:load deck={deck} closeHref="/slides" readHref={`/slides/${slide.id}/read`} />
+  <SlideViewer client:load deck={deck} />
 </BaseLayout>
