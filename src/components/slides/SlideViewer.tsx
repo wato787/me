@@ -1,14 +1,14 @@
 import { useEffect, useRef, useState } from 'react';
 import type { SlideDeck } from './types';
 
-interface SlideViewerProps { deck: SlideDeck; closeHref: string; readHref: string; }
+interface SlideViewerProps { deck: SlideDeck; }
 
 const getIndexFromHash = (length: number) => {
   const parsed = Number.parseInt(window.location.hash.replace(/^#(?:slide-)?/, ''), 10);
   return Number.isFinite(parsed) ? Math.min(Math.max(parsed - 1, 0), Math.max(length - 1, 0)) : 0;
 };
 
-const SlideViewer = ({ deck, closeHref, readHref }: SlideViewerProps) => {
+const SlideViewer = ({ deck }: SlideViewerProps) => {
   const viewerRef = useRef<HTMLElement>(null);
   const touchStartXRef = useRef<number | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -57,13 +57,6 @@ const SlideViewer = ({ deck, closeHref, readHref }: SlideViewerProps) => {
 
   return (
     <main ref={viewerRef} className="slideViewer" aria-label={`${deck.title} のスライド`} tabIndex={-1} onKeyDown={handleKeyDown} onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
-      <header className="viewerHeader">
-        <a className="viewerLink mono-font" href={closeHref}>Back</a>
-        <p className="viewerTitle">{deck.title}</p>
-        <nav className="viewerActions mono-font" aria-label="資料表示">
-          <a className="viewerLink" href={readHref}>Read</a>
-        </nav>
-      </header>
       <div className="slideViewport">
         {deck.slides.length > 0 ? <article className="articleBody slideBody" aria-label={`${currentIndex + 1}枚目のスライド`} dangerouslySetInnerHTML={{ __html: deck.slides[currentIndex] ?? '' }} /> : <p className="empty">スライド本文がまだありません。</p>}
       </div>
