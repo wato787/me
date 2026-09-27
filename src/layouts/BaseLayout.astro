@@ -6,11 +6,13 @@ import '../styles/global.css';
 interface Props {
   title?: string;
   description?: string;
+  immersive?: boolean;
 }
 
 const {
   title = 'wato787 | Portfolio',
   description = 'wato787のポートフォリオサイトです。',
+  immersive = false,
 } = Astro.props;
 ---
 
@@ -31,13 +33,7 @@ const {
     <slot name="head" />
   </head>
   <body>
-    <div class="shell">
-      <div class="container">
-        <Header />
-        <slot />
-        <Footer />
-      </div>
-    </div>
+    {immersive ? <slot /> : <div class="shell"><div class="container"><Header /><slot /><Footer /></div></div>}
   </body>
 </html>
 

@@ -1,4 +1,5 @@
 import { renderArticleHtml } from './articleHtml';
+import { sanitizeContentHtml } from './sanitizeHtml';
 
 const EMPTY_BLOCK_PATTERN = /^(?:\s|<p>(?:\s|<br\s*\/?>|&nbsp;)*<\/p>)+$/i;
 
@@ -21,7 +22,7 @@ export function renderSlideHtml(html: string): string[] {
   const slides: string[] = [];
 
   for (const chunk of splitSlideHtml(html)) {
-    const rendered = renderArticleHtml(chunk);
+    const rendered = sanitizeContentHtml(renderArticleHtml(chunk));
     if (!isEmptySlideHtml(rendered)) {
       slides.push(rendered);
     }
