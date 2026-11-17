@@ -21,53 +21,39 @@ const profile = await getProfile();
 
 <style>
   .header {
-    position: sticky;
-    top: 0;
-    z-index: 50;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-block: 2rem;
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(12px);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding-block:1.6rem;
+    border-bottom:1px solid var(--color-border);
   }
-
   .logoLink {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
+    display:flex;
+    align-items:center;
+    gap:.7rem;
+    min-height:44px;
   }
-
   .logoIcon {
-    color: var(--color-accent);
+    color:var(--color-accent);
   }
-
   .logoText {
-    font-size: 0.875rem;
-    font-weight: 900;
-    letter-spacing: -0.05em;
-    text-transform: uppercase;
-    line-height: 1;
+    font-size:1rem;
+    font-weight:700;
+    letter-spacing:-.04em;
   }
-
   .navList {
-    display: flex;
-    gap: 1.5rem;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    font-size: 11px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--color-text-muted);
+    list-style:none;
+    margin:0;
+    padding:0;
   }
-
   .navLink {
-    transition: color 0.2s;
+    display:inline-flex;
+    align-items:center;
+    min-height:44px;
+    padding-inline:.5rem;
+    font-size:.9rem;
   }
-
   .navLink:hover {
-    color: var(--color-text-strong);
+    text-decoration:underline;
   }
 </style>

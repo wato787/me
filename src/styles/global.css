@@ -1,70 +1,62 @@
 :root {
-  --color-background: #ffffff;
-  --color-foreground: #171717;
-  --color-accent: #2563eb;
-  --color-accent-hover: #1d4ed8;
-  --color-accent-soft: #eff6ff;
-  --color-text: #27272a;
-  --color-text-strong: #18181b;
-  --color-text-subtle: #3f3f46;
-  --color-text-muted: #71717a;
-  --color-text-faint: #a1a1aa;
-  --color-text-placeholder: #d4d4d8;
-  --color-border: #e4e4e7;
-  --color-surface: #f4f4f5;
-  --container-max: 56rem;
-  --section-gap: 16rem;
-  --section-gap-sm: 10rem;
+  --color-background: #f8fafc;
+  --color-foreground: #20324a;
+  --color-accent: #244f94;
+  --color-accent-hover: #173966;
+  --color-accent-soft: #e8eef7;
+  --color-text: #33435a;
+  --color-text-strong: #20324a;
+  --color-text-subtle: #42546d;
+  --color-text-muted: #596a80;
+  --color-text-faint: #617187;
+  --color-text-placeholder: #617187;
+  --color-border: #cbd5e1;
+  --color-surface: #edf2f7;
+  --container-max: 64rem;
+  --section-gap: clamp(5rem, 10vw, 9rem);
+  --section-gap-sm: clamp(4rem, 7vw, 6rem);
 }
-
 * {
   box-sizing: border-box;
 }
-
 html {
-  scroll-behavior: smooth;
+  scrollbar-gutter: stable;
 }
-
 body {
   margin: 0;
   background: var(--color-background);
   color: var(--color-foreground);
   font-family: 'Noto Sans JP', sans-serif;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
-
+h1,h2,h3,p {
+  margin: 0;
+}
 a {
   color: inherit;
   text-decoration: none;
+  text-underline-offset: .25em;
 }
-
+a:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 6px;
+  border-radius: 2px;
+}
 img {
   max-width: 100%;
 }
-
 .mono-font {
-  font-family: 'JetBrains Mono', monospace;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-variant-numeric: tabular-nums;
 }
-
-::-webkit-scrollbar {
-  width: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: #ffffff;
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--color-border);
-  border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-accent);
-}
-
 ::selection {
-  background-color: var(--color-accent);
-  color: white;
+  background: #d3e0f4;
+  color: #20324a;
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
 }

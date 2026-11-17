@@ -73,215 +73,111 @@ const imageUrl = profile.image?.url ? optimizeImageUrl(profile.image.url, 800, 8
 
 <style>
   .section {
-    padding-top: 5rem;
-    padding-bottom: 8rem;
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 3rem;
-    align-items: center;
+    padding-block:clamp(3rem,7vw,6rem) var(--section-gap);
+    display:grid;
+    grid-template-columns:1fr;
+    gap:2.5rem;
+    align-items:center;
   }
-
-  @media (min-width: 1024px) {
-    .section {
-      grid-template-columns: 1fr 1fr;
-      gap: 6rem;
-    }
-  }
-
-  .imageGroup {
-    position: relative;
-  }
-
   .imageFrame {
-    position: relative;
-    aspect-ratio: 1;
-    border-radius: 2rem;
-    overflow: hidden;
-    background: var(--color-border);
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-    transition: box-shadow 0.7s;
+    aspect-ratio:1;
+    overflow:hidden;
+    border-radius:4px;
+    background:var(--color-surface);
   }
-
-  .imageGroup:hover .imageFrame {
-    box-shadow: 0 25px 50px -12px rgba(37, 99, 235, 0.1);
-  }
-
   .profileImage {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 1s;
-    transform: scale(1.05);
+    display:block;
+    width:100%;
+    height:100%;
+    object-fit:cover;
   }
-
-  .imageGroup:hover .profileImage {
-    transform: scale(1);
-  }
-
   .imageOverlay {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.2), transparent, transparent);
-    opacity: 0.4;
+    display:none;
   }
-
-  .content {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-
   .labelRow {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    margin-bottom: 1.5rem;
+    margin-bottom:1rem;
   }
-
   .labelDot {
-    width: 0.5rem;
-    height: 0.5rem;
-    border-radius: 9999px;
-    background: var(--color-accent);
+    display:none;
   }
-
   .label {
-    font-size: 11px;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.4em;
-    color: var(--color-text-muted);
+    font-size:.8rem;
+    font-weight:500;
+    color:var(--color-text-muted);
+    text-transform:lowercase;
   }
-
   .name {
-    font-size: 3rem;
-    font-weight: 900;
-    letter-spacing: -0.05em;
-    color: var(--color-text-strong);
-    margin-bottom: 1.5rem;
-    line-height: 1;
+    font-family:'Manrope','Noto Sans JP',sans-serif;
+    font-size:clamp(3rem,7.5vw,5.75rem);
+    font-weight:500;
+    letter-spacing:-.075em;
+    line-height:1.1;
+    margin-bottom:1.5rem;
   }
-
-  @media (min-width: 768px) {
-    .name {
-      font-size: 4.5rem;
-    }
-  }
-
-  .descriptionWrap {
-    margin-bottom: 1.5rem;
-  }
-
   .description {
-    font-size: 0.875rem;
-    color: var(--color-text-muted);
-    line-height: 1.625;
-    font-weight: 500;
-    max-width: 32rem;
+    color:var(--color-text);
+    font-size:.95rem;
+    line-height:2;
+    max-width:30rem;
   }
-
   .locationWrap {
-    margin-bottom: 1.5rem;
+    margin-block:1.5rem 2rem;
   }
-
   .locationRow {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+    display:flex;
+    align-items:center;
+    gap:.5rem;
   }
-
   .locationIconWrap {
-    width: 2rem;
-    height: 2rem;
-    border-radius: 9999px;
-    background: var(--color-accent-soft);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    display:flex;
   }
-
   .locationIcon {
-    color: var(--color-accent);
+    color:var(--color-text-muted);
   }
-
   .locationText {
-    font-size: 0.875rem;
-    font-weight: 700;
-    color: var(--color-text-strong);
-    letter-spacing: -0.025em;
-    font-style: italic;
+    font-size:.85rem;
+    color:var(--color-text-muted);
   }
-
   .socialGrid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:1.5rem;
   }
-
-  @media (min-width: 640px) {
-    .socialGrid {
-      grid-template-columns: 1fr 1fr;
-    }
-  }
-
   .card {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem;
-    border-radius: 1rem;
-    border: 1px solid var(--color-border);
-    background: var(--color-background);
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-    transition: border-color 0.3s;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    min-height:48px;
+    border-bottom:1px solid var(--color-border);
+    padding-block:.7rem;
   }
-
-  .card:hover {
-    border-color: rgba(24, 24, 27, 0.3);
-  }
-
   .cardInner {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
+    display:flex;
+    align-items:center;
+    gap:.7rem;
   }
-
   .cardIcon {
-    width: 2.5rem;
-    height: 2.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 0.75rem;
-    background: var(--color-surface);
-    transition: background 0.3s, color 0.3s;
+    display:flex;
+    align-items:center;
   }
-
-  .card:hover .cardIcon {
-    background: var(--color-text-strong);
-    color: white;
-  }
-
-  .cardLabel {
-    font-size: 0.875rem;
-    font-weight: 700;
-    color: var(--color-text-strong);
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-  }
-
   .cardX {
-    font-weight: 900;
-    font-size: 1.125rem;
+    font-size:1rem;
   }
-
+  .cardLabel {
+    font-size:.85rem;
+    font-weight:500;
+  }
   .cardArrow {
-    color: var(--color-text-placeholder);
-    transition: color 0.3s, transform 0.3s;
+    color:var(--color-accent);
   }
-
-  .card:hover .cardArrow {
-    color: var(--color-text-strong);
-    transform: translateX(0.25rem);
+  .card:hover {
+    border-color:var(--color-accent);
+    color:var(--color-accent);
+  }
+  @media(min-width:768px) {
+    .section {
+      grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);
+      gap:clamp(3rem,7vw,6rem);
+    }
   }
 </style>

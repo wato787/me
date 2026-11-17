@@ -18,57 +18,44 @@ const year = new Date().getFullYear();
 
 <style>
   .footer {
-    padding-block: 8rem;
-    border-top: 1px solid var(--color-border);
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-    gap: 2rem;
+    padding-block:2rem;
+    border-top:1px solid var(--color-border);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:1.5rem;
+    flex-wrap:wrap;
   }
-
-  @media (min-width: 768px) {
-    .footer {
-      flex-direction: row;
-    }
-  }
-
   .brand {
-    font-size: 0.875rem;
-    font-weight: 900;
-    letter-spacing: -0.05em;
-    text-transform: uppercase;
-    color: var(--color-text-strong);
+    font-size:.9rem;
+    font-weight:600;
+    letter-spacing:-.04em;
+    min-height:44px;
+    display:inline-flex;
+    align-items:center;
   }
-
   .links {
-    display: flex;
-    gap: 3rem;
-    font-size: 10px;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.2em;
-    color: var(--color-text-muted);
-    align-items: center;
+    display:flex;
+    gap:1.5rem;
+    align-items:center;
+    font-size:.8rem;
+    color:var(--color-text-muted);
   }
-
   .link {
-    transition: color 0.2s;
+    min-height:44px;
+    display:inline-flex;
+    align-items:center;
   }
-
   .link:hover {
-    color: var(--color-accent);
+    text-decoration:underline;
+    color:var(--color-accent);
   }
-
   .divider {
-    width: 0.25rem;
-    height: 0.25rem;
-    background: var(--color-border);
-    border-radius: 9999px;
+    width:1px;
+    height:12px;
+    background:var(--color-border);
   }
-
   .copyright {
-    color: var(--color-text-faint);
-    cursor: default;
+    font-size:.75rem;
   }
 </style>

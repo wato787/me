@@ -25,65 +25,57 @@ const profile = await getProfile();
 
 <style>
   .section {
-    margin-bottom: var(--section-gap-sm);
-    padding-top: 5rem;
-    border-top: 1px solid var(--color-border);
+    margin-bottom:var(--section-gap-sm);
+    padding-top:3rem;
+    border-top:1px solid var(--color-border);
   }
-
   .inner {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    gap: 2rem;
+    display:flex;
+    flex-direction:column;
+    gap:2rem;
+    justify-content:space-between;
   }
-
-  @media (min-width: 768px) {
-    .inner {
-      flex-direction: row;
-      align-items: center;
-    }
-  }
-
   .heading {
-    font-size: 11px;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.5em;
-    color: var(--color-accent);
-    margin-bottom: 1rem;
+    font-family:'Manrope',sans-serif;
+    font-size:1.5rem;
+    font-weight:500;
+    letter-spacing:-.04em;
+    text-transform:lowercase;
+    margin-bottom:1.5rem;
   }
-
   .message {
-    font-size: 1.875rem;
-    font-weight: 900;
-    letter-spacing: -0.05em;
-    color: var(--color-text-strong);
+    font-size:clamp(1.1rem,2.5vw,1.6rem);
+    line-height:1.9;
+    font-weight:500;
+    letter-spacing:-.03em;
   }
-
   .inlineLink {
-    color: var(--color-accent);
+    color:var(--color-accent);
+    text-decoration:underline;
   }
-
-  .inlineLink:hover {
-    text-decoration: underline;
-  }
-
   .button {
-    display: inline-flex;
-    align-items: center;
-    gap: 1rem;
-    background: var(--color-text-strong);
-    color: white;
-    padding: 1rem 2rem;
-    border-radius: 0.75rem;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    transition: background 0.3s;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    display:inline-flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:2rem;
+    align-self:flex-start;
+    padding:.9rem 1.3rem;
+    border:1px solid var(--color-accent);
+    color:var(--color-accent);
+    border-radius:3px;
+    font-size:.9rem;
   }
-
   .button:hover {
-    background: var(--color-accent);
+    background:var(--color-accent);
+    color:#fff;
+  }
+  @media(min-width:768px) {
+    .inner {
+      flex-direction:row;
+      align-items:center;
+    }
+    .button {
+      align-self:center;
+    }
   }
 </style>
