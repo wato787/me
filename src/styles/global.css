@@ -1,70 +1,79 @@
 :root {
   --color-background: #ffffff;
-  --color-foreground: #171717;
-  --color-accent: #2563eb;
-  --color-accent-hover: #1d4ed8;
-  --color-accent-soft: #eff6ff;
-  --color-text: #27272a;
-  --color-text-strong: #18181b;
-  --color-text-subtle: #3f3f46;
-  --color-text-muted: #71717a;
-  --color-text-faint: #a1a1aa;
-  --color-text-placeholder: #d4d4d8;
-  --color-border: #e4e4e7;
-  --color-surface: #f4f4f5;
-  --container-max: 56rem;
-  --section-gap: 16rem;
-  --section-gap-sm: 10rem;
+  --color-foreground: #292927;
+  --color-accent: #236781;
+  --color-accent-hover: #174a60;
+  --color-accent-soft: #eef5f7;
+  --color-text: #373735;
+  --color-text-strong: #292927;
+  --color-text-subtle: #50504d;
+  --color-text-muted: #686864;
+  --color-text-faint: #686864;
+  --color-text-placeholder: #686864;
+  --color-border: #e9e9e6;
+  --color-surface: #f5f5f3;
+  --container-max: 48rem;
+  --section-gap: 4rem;
+  --section-gap-sm: 3rem;
+  --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', 'Yu Gothic', Meiryo, sans-serif;
+  --font-code: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 }
-
 * {
   box-sizing: border-box;
 }
-
 html {
-  scroll-behavior: smooth;
+  scrollbar-gutter: stable;
 }
-
 body {
   margin: 0;
   background: var(--color-background);
   color: var(--color-foreground);
-  font-family: 'Noto Sans JP', sans-serif;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.8;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
-
+h1, h2, h3, h4, p {
+  margin: 0;
+}
 a {
   color: inherit;
   text-decoration: none;
+  text-underline-offset: 0.22em;
 }
-
+a:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 4px;
+  border-radius: 3px;
+}
 img {
   max-width: 100%;
 }
-
 .mono-font {
-  font-family: 'JetBrains Mono', monospace;
+  font-variant-numeric: tabular-nums;
 }
-
-::-webkit-scrollbar {
-  width: 6px;
+.sectionHeading {
+  margin-bottom: 1.25rem;
+  font-size: 1.125rem;
+  line-height: 1.5;
+  font-weight: 650;
 }
-
-::-webkit-scrollbar-track {
-  background: #ffffff;
+.textLink {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-decoration-color: #b6cbd4;
 }
-
-::-webkit-scrollbar-thumb {
-  background: var(--color-border);
-  border-radius: 10px;
+.textLink:hover {
+  color: var(--color-accent-hover);
+  text-decoration-color: currentColor;
 }
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-accent);
-}
-
 ::selection {
-  background-color: var(--color-accent);
-  color: white;
+  background: #dfeef3;
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
 }
